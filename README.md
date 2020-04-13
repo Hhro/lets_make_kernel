@@ -1,6 +1,8 @@
 # Let's develop kernel
 
-This is my repository for kernel developing project of CyKor. I'm just noob at it, and hope to build satisfying kernel at the end.
+This is my repository for kernel developing project of CyKor.
+
+Target architecture is x86_64
 
 # Build
 

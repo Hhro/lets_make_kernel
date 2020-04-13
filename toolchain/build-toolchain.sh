@@ -3,7 +3,7 @@
 # Setup variables
 export PREFIX="$PWD/build/"
 export PATH="$PREFIX/bin:$PATH"
-export TARGET=i686-elf
+export TARGET=x86_64-elf
 
 function usage {
     printf "Usage: %s [toolchain] [clean]\n\n" $0

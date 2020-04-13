@@ -1,14 +1,14 @@
 NAME = fried
 
 # Now it only supports x86 architecture
-KTARGET = i686-elf
+KTARGET = x86_64-elf
 ARCH = x86
 
 TOOLCHAIN = toolchain/build/bin
 AS = ${TOOLCHAIN}/${KTARGET}-as
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 
-QEMU = qemu-system-i386
+QEMU = qemu-system-x86_64
 QEMU_FLAGS += -curses # For remote development
 
 CLEAN_OBJ = ${NAME}.bin ${NAME}.iso

@@ -1,5 +1,5 @@
 TOOLCHAIN = ../toolchain/build/bin
-KTARGET = i686-elf
+KTARGET = x86_64-elf
 
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 CXXFLAGS = -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
