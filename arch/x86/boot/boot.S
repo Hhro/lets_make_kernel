@@ -60,24 +60,14 @@ _start:
 	/* now we have a stack */
 	movl $stack_top, %esp
 
-	call check_multiboot
-
 	call setup_page_tables
 	call enable_paging
 
-	lgdt (gdt_ptr)
+	lgdt gdt_ptr
 
-	mov $0xb8000, %esi
-	movl $0x2f4b2f4f, (%esi)
+	ljmp $GDT_ENTRY_SIZE, $_start64
+
 	hlt
-
-check_multiboot:
-	cmp $0x36d76289, %eax
-	jne .no_multiboot
-	ret
-.no_multiboot:
-	mov $0, %eax
-	jmp error
 
 setup_page_tables:
 	movl $pdpt, %eax
@@ -97,7 +87,7 @@ setup_page_tables:
 	mov %eax, pd(, %ecx, PD_ENTRY_SIZE)
 
 	inc %ecx
-	cmp %ecx, 0x200
+	cmp $0x200, %ecx
 	jne .map_pd_table
 
 	ret
@@ -131,4 +121,19 @@ error:
 	movl $0x4f3a4f52, 4(%eax)
 	movl $0x4f204f20, 8(%eax)
 	movb %al, 0xb800a
+	hlt
+
+.code64
+.global _start64
+.type _start64, @function
+_start64:
+	mov $0, %ax
+	mov %ss, %ax
+	mov %ds, %ax
+	mov %es, %ax
+	mov %fs, %ax
+	mov %gs, %ax
+
+	call kernel_main
+
 	hlt

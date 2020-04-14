@@ -22,7 +22,6 @@
     ((((flags)) & 0x0F ) << 52) |   \
     (((((limit)) >> 16) & 0x0F ) << 48) |   \
     ((((access)) & 0xFF) << 40) |   \
-    (((((base)) >> 16) & 0xFF) <<32) |  \
     ((((base)) & 0x0FFF) << 16) |   \
     (((limit)) & 0xFFFF)    \
 )
@@ -34,6 +33,7 @@
                     GDT_FLAG_LONG, \
                     GDT_ACCESS_PRESENT | \
                     GDT_ACCESS_PRIV_RING0 | \
+                    GDT_ACCESS_TYPE | \
                     GDT_ACCESS_EXECUTABLE)
 
 #define GDT_TABLE_ALIGNMENT 0x1000
