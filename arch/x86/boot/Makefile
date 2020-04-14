@@ -1,8 +1,8 @@
 TOOLCHAIN = ../../../toolchain/build/bin
 KTARGET = x86_64-elf
 
-AS = ${TOOLCHAIN}/${KTARGET}-as
-CXXFLAGS = --ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+CXX = ${TOOLCHAIN}/${KTARGET}-g++
+CXXFLAGS = --ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fPIC
 
 OBJS = boot.o
 
@@ -11,7 +11,7 @@ OBJS = boot.o
 all: boot.o
 
 boot.o:
-	${AS} boot.s -o $@
+	${CXX} -c boot.S -o $@
 
 clean:
 	rm -f $(OBJS)

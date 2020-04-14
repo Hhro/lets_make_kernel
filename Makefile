@@ -5,7 +5,6 @@ KTARGET = x86_64-elf
 ARCH = x86
 
 TOOLCHAIN = toolchain/build/bin
-AS = ${TOOLCHAIN}/${KTARGET}-as
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 
 QEMU = qemu-system-x86_64
