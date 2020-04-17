@@ -4,6 +4,8 @@
 #include "msr.h"
 #include "kernel.h"
 #include "mmu.h"
+#include "eflags.h"
+#include "cpuid.h"
 
 .set MB_HEADER_LEN, multiboot_header_end - multiboot_header
 .set MB_CHECKSUM, -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT2_ARCHITECTURE_I386 + MB_HEADER_LEN)
@@ -32,7 +34,7 @@ multiboot_header_end:
 .comm pd, PD_SIZE, PD_ALIGN
 
 /*
-	Multiboot2 standard does not define the stack pointer register
+	Multiboot2 standard does not set the stack pointer register
 	and it is up to kernel to provide a stack. This allocates
 	small room for a small stack by creating a symbol at bss.
 */
@@ -60,26 +62,102 @@ _start:
 	/* now we have a stack */
 	movl $stack_top, %esp
 
+	/* check if processor supports long mode */
+	call is_64_arch_avail
+	jz error	//this kernel is only for processor supporting x86_64
+
+	/* To transit to IA32-e mode, we need to prepare page table and GDT */
 	call setup_page_tables
 	call enable_paging
 
 	lgdt gdt_ptr
 
+	/* Transit to IA32-e mode */
 	ljmp $GDT_ENTRY_SIZE, $_start64
 
 	hlt
 
+is_cpuid_avail:
+	// Check cpuid instruction is supported by attempting to 
+	// Flip the ID bit of EFLAGS. If we can flip it, cpuid is available
+
+	// Set %eax value as eflags
+	pushfl
+	pop %eax
+
+	// Copy it to %ecx for comparaing after flipping
+	mov %eax, %ecx
+
+	// Flip the ID bit
+	xor $(EFLAGS_ID), %eax
+	
+	// Copy %eax to eflags
+	push %eax
+	popfl
+
+	// Set %eax value as eflags to compare with origin(%ecx)
+	pushfl
+	pop %eax
+
+	// Restore original eflags because we flipped them.
+	push %ecx
+	popfl
+
+	// Compare eax and ecx. If they are same, it means we can't flip ID bit.
+	// Thus we can't use cpuid.
+	// Return:
+	//	%eax = 0 => no cpuid
+	//	%eax = 1 => cpuid available
+	xor %eax, %ecx
+	ret
+
+is_64_arch_avail:
+	// Check Intel 64 architecture is supported by inspecting a result of the cpuid instruction
+
+	// CPUID must be available
+	call is_cpuid_avail
+	jz .no_longmode
+	
+	// If maximum CPUID input value is below 0x80000001, we can't determine it supports 64 architecture or not.
+	mov $0x80000000, %eax	// return maximum input value of ex-cpuid on %eax
+	cpuid
+	cmp $0x80000001, %eax
+	jb .no_longmode
+	
+	// Get ex-cpuid information
+	// If 29th bit of %edx is set, Intel 64bit architecture is supported
+	mov $0x80000001, %eax
+	cpuid
+	and $(CPUID_64ARCH_AVAIL), %edx
+	jz .no_longmode
+
+	xor %eax,%eax
+	inc %eax
+
+	ret
+
+.no_longmode:
+	xor %eax, %eax
+	ret
+
 setup_page_tables:
+	/* 
+		Setup 4-level-paging with page of 2MiB zize
+		Because we're in booting proecdure, we use identity-mapping for ease
+	*/
+
+	/* Initialize PML4 */
 	movl $pdpt, %eax
 	or $(PML4E_PRESENT | PML4E_WRITABLE), %eax
 	movl %eax, pml4
 
+	/* Initialize PDPT */
 	movl $pd, %eax
 	or $(PDPTE_PRESENT | PDPTE_WRITABLE), %eax
 	movl %eax, pdpt
 
-	mov $0, %ecx
-
+	/* Iterate 0x200 times to setup PD */
+	mov $0, %ecx	
 .map_pd_table:
 	mov $0x200000, %eax
 	mul %ecx

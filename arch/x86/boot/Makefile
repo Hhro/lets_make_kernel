@@ -8,10 +8,10 @@ OBJS = boot.o
 
 .PHONY: clean
 
-all: boot.o
+all: ${OBJS}
 
-boot.o:
-	${CXX} -c boot.S -o $@
+boot.o: boot.S
+	${CXX} -c $^ -o $@
 
 clean:
 	rm -f $(OBJS)

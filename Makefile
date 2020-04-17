@@ -8,7 +8,7 @@ TOOLCHAIN = toolchain/build/bin
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 
 QEMU = qemu-system-x86_64
-QEMU_FLAGS += -curses # For remote development
+QEMU_FLAGS = -curses # For remote development
 
 CLEAN_OBJ = ${NAME}.bin ${NAME}.iso
 CLEAN_DIR = isodir
