@@ -2,3 +2,4 @@ toolchain/build
 *.o
 *.bin
 *.iso
+isodir/
