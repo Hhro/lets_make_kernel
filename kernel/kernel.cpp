@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "keyboard.h"
  
 extern "C" void kernel_main(void);
 
@@ -103,4 +105,11 @@ void kernel_main(void)
  
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello, kernel World!\n");
+
+	if (activate_keyboard()) {
+		terminal_writestring("[+] Keyboard activation success\n");
+	}
+	else {
+		terminal_writestring("[!] Keyboard activation failed\n");
+	}
 }
