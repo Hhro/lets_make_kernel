@@ -1,44 +1,63 @@
-/* The bootloader will look at this image and start execution at the symbol
-   designated as the entry point. */
 ENTRY(_start)
- 
-/* Tell where the various sections of the object files will be put in the final
-   kernel image. */
+
 SECTIONS
 {
-	. = 4M;
- 
-	/* First put the multiboot header, as it is required to be put very early
-	   early in the image or the bootloader won't recognize the file format.
-	   Next we'll put the .text section. */
-	.text :ALIGN(8)
-	{
-		*(.multiboot)
-		*(.text)
-	}
- 
-	/* Read-only data. */
-	.rodata :
-	{
-		*(.rodata)
-	}
- 
-	/* Read-write data (initialized) */
-	.data :
-	{
-		*(.data)
-	}
- 
-	/* Read-write data (uninitialized) and stack */
-	.bss :
-	{
-		*(.bss)
-		*(COMMON)
-	}
-	
-	. = ALIGN(0x1000);
-	_boot_end = .;
- 
-	/* The compiler may produce other sections, by default it will put them in
-	   a segment with the same name. Simply add stuff here as needed. */
+  . = 4M;
+  _kernel_physical_start = .;
+
+  .boottext :
+    {
+      *boot.o (.multiboot)
+      *boot.o (.text)
+    }
+  .bootrodata :
+    {
+      *boot.o (.rodata)
+    }
+  .bootdata :
+    {
+      *boot.o (.data)
+    }
+  .bootbss :
+    {
+      *boot.o (.bss)
+      *boot.o (COMMON)
+    }
+
+  . = ALIGN(0x1000);
+  _boot_end = .;
+
+  . += 0xFFFFFFFF80000000;
+  _kernel_virtual_start = .;
+  .text : AT(_boot_end)
+  {
+    *(.multiboot)
+    *(.text)
+  }
+
+  . = ALIGN(0x1000);
+
+  .rodata : AT ( (LOADADDR (.text) + SIZEOF (.text) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
+  {
+    *(.rodata*)
+  }
+
+  . = ALIGN(0x1000);
+
+  .data : AT ( (LOADADDR (.rodata) + SIZEOF (.rodata) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
+  {
+    *(.data)
+  }
+
+  . = ALIGN(0x1000);
+
+  .bss : AT ( (LOADADDR (.data) + SIZEOF (.data) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
+  {
+    *(COMMON)
+    *(.bss)
+  }
+
+  _kernel_virtual_end = .;
+
+  _kernel_physical_end = (LOADADDR (.bss) + SIZEOF (.bss) + 0xFFF) & 0xFFFFFFFFFFFFF000;
 }
