@@ -1,11 +1,12 @@
+#include <kapi/cr>
+#include <kapi/gdt>
+#include <kapi/msr>
+#include <kapi/kernel>
+#include <kapi/mmu>
+#include <kapi/eflags>
+#include <kapi/cpuid>
+
 #include "multiboot2.h"
-#include "cr.h"
-#include "gdt.h"
-#include "msr.h"
-#include "kernel.h"
-#include "mmu.h"
-#include "eflags.h"
-#include "cpuid.h"
 
 .set MB_HEADER_LEN, multiboot_header_end - multiboot_header
 .set MB_CHECKSUM, -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT2_ARCHITECTURE_I386 + MB_HEADER_LEN)

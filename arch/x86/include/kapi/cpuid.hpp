@@ -1,5 +1,5 @@
-#ifndef X86_CPUID_H
-#define X86_CPUID_H
+#ifndef _KAPI_X86_CPUID_H
+#define _KAPI_X86_CPUID_H
 
 /* 
     eax = 0x80000001

@@ -1,5 +1,5 @@
-#ifndef X86_GDT_H
-#define X86_GDT_H
+#ifndef _KAPI_X86_GDT_H
+#define _KAPI_X86_GDT_H
 
 #define GDT_ENTRY_SIZE  8
 

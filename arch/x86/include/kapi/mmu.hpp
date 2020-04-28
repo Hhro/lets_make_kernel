@@ -1,5 +1,5 @@
-#ifndef X86_MMU_H
-#define X86_MMU_H
+#ifndef _KAPI_X86_MMU_H
+#define _KAPI_X86_MMU_H
 
 #define PML4_SIZE   0x1000
 #define PML4_ALIGN  0x1000
