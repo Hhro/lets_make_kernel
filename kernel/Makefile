@@ -3,11 +3,7 @@ KTARGET = x86_64-elf
 ARCH = x86
 
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
-<<<<<<< HEAD
-CXXFLAGS = -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti
-=======
-CXXFLAGS = -z max-page-size=0x1000 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mcmodel=kernel -mno-red-zone -g
->>>>>>> kernel locate high virtual memory
+CXXFLAGS = -z max-page-size=0x1000 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mcmodel=kernel -mno-red-zone -g -mno-mmx -mno-sse -mno-sse2
 
 AS = ${TOOLCHAIN}/${KTARGET}-as
 OBJS =  kernel.o IRQ/idt.o IRQ/irq_asm.o
@@ -25,7 +21,7 @@ IRQ/idt.o:
 	${CXX} -c IRQ/idt.cpp  -o $@ ${CXXFLAGS}
 
 IRQ/irq_asm.o:
-	${CXX} -c IRQ/irq_asm.s -o ${@} -mcmodel=kernel
+	${CXX} -c IRQ/irq_asm.S -o ${@} -mcmodel=kernel
 
 clean:
 	rm -f $(OBJS)

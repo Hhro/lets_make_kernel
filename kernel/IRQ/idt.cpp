@@ -5,8 +5,11 @@ void outb(uint8_t v, uint16_t port){
     __asm__ __volatile__("outb %0,%1" : : "a" (v), "dN" (port));
 }
 
+extern "C" void terminal_putchar(char);
+
 extern "C" void irq0_handler(void) {
-          outb(0x20, 0x20); //EOI
+    terminal_putchar('!');
+    outb(0x20, 0x20); //EOI
 }
  
 extern "C" void irq1_handler(void) {

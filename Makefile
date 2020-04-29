@@ -47,7 +47,7 @@ OBJS = ${ARCH_DIR}/boot/boot.o kernel/kernel.o ${ARCH_DIR}/kernel/cpuinfo.o ${AR
 CXXFLAGS = -lkernel -lgcc -Wl,--build-id=none -ffreestanding -O2 -nostdlib
 install: clean build-kernel build-arch
 	#${CXX} -mcmodel=kernel -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -O2 -nostdlib ${ARCH_DIR}/boot/boot.o kernel/kernel.o kernel/IRQ/idt.o kernel/IRQ/irq_asm.o -lgcc -Wl,--build-id=none
-	${CXX} -mcmodel=kernel -mno-red-zone -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -O2 -nostdlib ${ARCH_DIR}/boot/boot.o kernel/kernel.o kernel/IRQ/idt.o kernel/IRQ/irq_asm.o -g -lgcc -Wl,--build-id=none
+	${CXX} -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -O2 -nostdlib ${ARCH_DIR}/boot/boot.o kernel/kernel.o kernel/IRQ/idt.o kernel/IRQ/irq_asm.o -g -lgcc -Wl,--build-id=none -mcmodel=kernel -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -z max-page-size=0x1000
 ###### Clean-up
 clean:
 	@for d in $(DIRS); \

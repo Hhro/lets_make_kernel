@@ -89,14 +89,15 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
     const size_t index = y * VGA_WIDTH + x;
     terminal_buffer[index] = vga_entry(c, color);
 }
-
-void terminal_putchar(char c) {
-    terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-    if (++terminal_column == VGA_WIDTH) {
-        terminal_column = 0;
-        if (++terminal_row == VGA_HEIGHT)
-            terminal_row = 0;
-    }
+ 
+extern "C" void terminal_putchar(char c) 
+{
+	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+	if (++terminal_column == VGA_WIDTH) {
+		terminal_column = 0;
+		if (++terminal_row == VGA_HEIGHT)
+			terminal_row = 0;
+	}
 }
 
 void terminal_write(const char *data, size_t size) {
@@ -136,7 +137,8 @@ void idt_init(void) {
  
 	uint64_t irq_addresses[16];        
 	uint64_t idt_address;
-	uint64_t idt_ptr[2];
+	uint64_t idt_ptr[2]={0,};
+	uint64_t out_ptr[2]={0,};
  
    //remapping the PIC 
 	outb(0x20, 0x11);
@@ -167,22 +169,23 @@ void idt_init(void) {
 	irq_addresses[14] = (uint64_t)irq14;
 	irq_addresses[15] = (uint64_t)irq15;
 
+	idt_address = (uint64_t)IDT ;
+	idt_ptr[0] = (sizeof (struct IDTDescr) * 256 - 1) + ((idt_address & 0xffffffffffff) << 16);
+	idt_ptr[1] = (idt_address >> 48) & 0xffff;
+
 	for(int i=0; i<16; i++){
 		set_IDT_entry(&IDT[32+i], irq_addresses[i], 0x08, 0, 0x8e);
 	}
- 
-	// fill the IDT descriptor
-	idt_address = (uint64_t)IDT ;
-	idt_ptr[0] = (sizeof (struct IDTDescr) * 256) + ((idt_address & 0xffffffffffff) << 48);
-	idt_ptr[1] = idt_address >> 48 ;
 	
 	__asm__ __volatile__ (
 		"cli \t\n"
 		"movq %0, %%rdx\t\n"
 		"lidt (%%rdx)\t\n"
-		"sti\t\n":
-		:"a"(&idt_ptr));
-	//load_idt(idt_ptr);
+		"sti\t\n"
+		"sidt (%%rbx)":
+		:"a"(&idt_ptr), "b"(&out_ptr));
+
+	return;
 }
 
 
@@ -191,7 +194,6 @@ void kernel_main(void)
 	/* Initialize terminal interface */
 	idt_init();
 	terminal_initialize();
-
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello Kernel");
 }

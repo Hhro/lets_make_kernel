@@ -237,4 +237,5 @@ _start64:
 
 	call kernel_main
 
-	hlt
+1:	hlt
+	jmp 1b
