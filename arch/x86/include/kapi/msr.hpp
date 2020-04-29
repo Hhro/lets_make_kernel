@@ -2,18 +2,30 @@
 #define _KAPI_X86_MSR_H
 
 #include <kapi/const.hpp>
+#include <kapi/msr-index.hpp>
 
-#define MSR_APIC_BASE           0x1B
-#define MSR_APIC_BASE_BSP_BIT       8
-#define MSR_APIC_BASE_ENABLE_BIT    11
-#define MSR_APIC_BASE_BASE_BIT      12
-#define MSR_APIC_BASE_BASE_LEN      5
+#define DECLARE_ARGS(val, low, high)    unsigned long low, high
+#define EAX_EDX_VAL(val, low, high) ((low) | (high) << 32)
+#define EAX_EDX_RET(val, low, high) "=a" (low), "=d" (high)
 
-#define MSR_APIC_BASE_BSP       _BIT(MSR_APIC_BASE_BSP_BIT)
-#define MSR_APIC_BASE_ENABLE    _BIT(MSR_APIC_BASE_ENABLE_BIT)
-#define MSR_APIC_BASE_BASE      (_MASK(MSR_APIC_BASE_BASE_LEN)<<MSR_APIC_BASE_BASE_BIT)
+static inline unsigned long long rdmsr(unsigned int msr_id){
+    DECLARE_ARGS(val, low, high);
 
-#define MSR_EFER            0xC0000080
-#define MSR_EFER_LME_BIT    8
-#define MSR_EFER_LME        _BITUL(MSR_EFER_LME_BIT)
-#endif
+    asm volatile(
+        "1: rdmsr \n"
+        "2:\n"
+        : EAX_EDX_RET(val, low, high) : "c" (msr_id)
+    );
+
+    return EAX_EDX_VAL(val, low, high);
+}
+
+static inline void wrmsr(unsigned int msr_id, u32 low, u32 high){
+    asm volatile(
+        "1: wrmsr \n"
+        "2:\n"
+        : : "c" (msr_id), "a" (low), "d" (high) : "memory"
+    );
+}
+
+#endif  //_KAPI_X86_MSR_H

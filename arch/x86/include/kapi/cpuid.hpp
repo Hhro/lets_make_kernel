@@ -1,16 +1,36 @@
 #ifndef _KAPI_X86_CPUID_H
 #define _KAPI_X86_CPUID_H
 
-/* 
-    eax = 0x80000001
-*/
-#define CPUID_LAHF_SAHF_AVAIL_IN_64 1<<0
-#define CPUID_LZCNT_AVAIL   1<<5
-#define CPUID_PREFETCHW_AVAIL    1<<8
-#define CPUID_SYSCALL_SYSRET_AVAIL   1<<11
-#define CPUID_EXECUTE_DISABLE_BIT_AVAIL 1<<20
-#define CPUID_1GIB_PAGE_AVAIL   1<<26
-#define CPUID_RDTSCP_IA32_TSC_AUX_AVAIL    1<<27
-#define CPUID_64ARCH_AVAIL  1<<29
+#include <kapi/const.hpp>
 
-#endif
+class CpuidRegs {
+ private:
+  u32 eax_, ebx_, ecx_, edx_;
+ public:
+  CpuidRegs(u32 eax, u32 ebx, u32 ecx, u32 edx):
+    eax_(eax), ebx_(ebx), ecx_(ecx), edx_(edx) {}
+
+  // getters and setters
+  u32 eax() const { return eax_; }
+  u32 ebx() const { return ebx_; }
+  u32 ecx() const { return ecx_; }
+  u32 edx() const { return edx_; }
+  void set_regs(u32 eax, u32 ebx, u32 ecx, u32 edx) {
+      eax_ = eax, ebx_ = ebx, ecx_ = ecx, edx_ = edx;
+  }
+};
+
+static inline void cpuid(CpuidRegs* regs) {
+    u32 eax, ebx, ecx, edx;
+
+    asm volatile(
+        "cpuid"
+        : "=a" (eax), "=b" (ebx), "=c" (ecx) "=d" (edx)
+        : "m" (regs->eax()), "m" (regs->ecx())
+        : "memory"
+    );
+
+    regs->set_regs(eax, ebx, ecx, edx);
+}
+
+#endif  // _KAPI_X86_CPUID_H

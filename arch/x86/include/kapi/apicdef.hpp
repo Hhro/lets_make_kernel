@@ -1,0 +1,6 @@
+#ifndef _KAPI_X86_APICDEF_H
+#define _KAPI_X86_APICDEF_H
+
+
+
+#endif  //_KAPI_X86_APICDEF_H
