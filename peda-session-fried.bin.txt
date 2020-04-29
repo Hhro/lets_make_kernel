@@ -1,3 +1,0 @@
-break terminal_writestring
-break * 0xffffffff804081ca
-
