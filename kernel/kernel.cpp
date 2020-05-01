@@ -2,11 +2,20 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kapi/cpuinfo.hpp>
-
+#include "IRQ/idt.h"
+#include "vga.h"
+ 
 extern "C" void kernel_main(void);
 
-
 struct IDTDescr IDT[256];
+uint64_t idt_ptr[2]={0,};
+
+struct GDTDescr_8 GDT[5];
+uint64_t gdt_ptrr[2]={0,};
+
+struct TSSSEGMENT TSS;
+
+extern "C" int bp();
 extern "C" int irq0();
 extern "C" int irq1();
 extern "C" int irq2();
@@ -25,120 +34,41 @@ extern "C" int irq14();
 extern "C" int irq15();
 
 
-/* Hardware text mode color constants. */
-enum vga_color{
-    VGA_COLOR_BLACK = 0,
-    VGA_COLOR_BLUE = 1,
-    VGA_COLOR_GREEN = 2,
-    VGA_COLOR_CYAN = 3,
-    VGA_COLOR_RED = 4,
-    VGA_COLOR_MAGENTA = 5,
-    VGA_COLOR_BROWN = 6,
-    VGA_COLOR_LIGHT_GREY = 7,
-    VGA_COLOR_DARK_GREY = 8,
-    VGA_COLOR_LIGHT_BLUE = 9,
-    VGA_COLOR_LIGHT_GREEN = 10,
-    VGA_COLOR_LIGHT_CYAN = 11,
-    VGA_COLOR_LIGHT_RED = 12,
-    VGA_COLOR_LIGHT_MAGENTA = 13,
-    VGA_COLOR_LIGHT_BROWN = 14,
-    VGA_COLOR_WHITE = 15,
-};
-
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
-    return fg | bg << 4;
+void tss_init(struct TSSSEGMENT * tss){
+	extern void * stack2;
+	tss->ist[0] = ((uint64_t)&stack2)+0x1000;
+	tss->io_base = 0xffff;
+	
+	return;
 }
 
-static inline uint16_t vga_entry(unsigned char uc, uint8_t color) {
-    return (uint16_t)uc | (uint16_t)color << 8;
-}
+void gdt_init(void){
+	uint64_t gdt_address;
 
-size_t strlen(const char *str) {
-    size_t len = 0;
-    while (str[len])
-        len++;
-    return len;
-}
+	set_GDT_entry8(&GDT[0], 0, 0, 0, 0, 0);
+	set_GDT_entry8(&GDT[1], 0, 0xfffff, GDT_FLAG_UPPER_KCODE, GDT_FLAG_LOWER_KCODE, GDT_TYPE_CODE);
+	set_GDT_entry8(&GDT[2], 0, 0xfffff, GDT_FLAG_UPPER_KDATA, GDT_FLAG_LOWER_KDATA, GDT_TYPE_CODE);
+	set_GDT_entry16(((struct GDTDescr_16 *)&GDT[3]), (uint64_t)&TSS, sizeof(struct TSSSEGMENT)-1, GDT_FLAG_UPPER_TSS, GDT_FLAG_LOWER_TSS, GDT_TYPE_TSS);
 
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
+	tss_init(&TSS);
 
-size_t terminal_row;
-size_t terminal_column;
-uint8_t terminal_color;
-uint16_t *terminal_buffer;
-
-void terminal_initialize(void) {
-    terminal_row = 0;
-    terminal_column = 0;
-    terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-    terminal_buffer = reinterpret_cast<uint16_t *>(0xB8000);
-    for (size_t y = 0; y < VGA_HEIGHT; y++) {
-        for (size_t x = 0; x < VGA_WIDTH; x++) {
-            const size_t index = y * VGA_WIDTH + x;
-            terminal_buffer[index] = vga_entry(' ', terminal_color);
-        }
-    }
-}
-
-void terminal_setcolor(uint8_t color) {
-    terminal_color = color;
-}
-
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
-    const size_t index = y * VGA_WIDTH + x;
-    terminal_buffer[index] = vga_entry(c, color);
-}
- 
-extern "C" void terminal_putchar(char c) 
-{
-	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
-	}
-}
-
-void terminal_write(const char *data, size_t size) {
-    for (size_t i = 0; i < size; i++)
-        terminal_putchar(data[i]);
-}
-
-void terminal_writestring(const char *data) {
-    terminal_write(data, strlen(data));
-}
-
-void kernel_main(void) {
-    /* Initialize termianl interface */
-    terminal_initialize();
-
-    CpuInfo cpu_info;
-    cpu_info.DetectBasicInfo();
-
-    if (!cpu_info.IsIntel()) {
-        terminal_writestring("[ERR] This kernel only supports intel arch");
-        asm volatile ("hlt");
-    }
-    cpu_info.DetectCpuFeatures();
-
-    // Intialize PIC at here
-    // if(cpu_info.CpuHas(X86_FEATURES_APIC)) {
-    //      InitApic();   
-    // }
-    // else {
-    //      Init8259();    
-    // }
-
-    terminal_writestring("Hello, kernel World!\n");
+	gdt_address = (uint64_t)GDT ;
+	gdt_ptrr[0] = (sizeof (struct GDTDescr_8) * 5 - 1) + ((gdt_address & 0xffffffffffff) << 16);
+	gdt_ptrr[1] = (gdt_address >> 48) & 0xffff;
+	
+	__asm__ __volatile__ (
+		"cli \t\n"
+		"movq %0, %%rdx\t\n"
+		"lgdt (%%rdx)\t\n"
+		"sti\t\n"
+		"movw $0x18, %%di\t\n"
+		"ltr %%di\t\n":
+		:"a"(&gdt_ptrr));
 }
 
 void idt_init(void) {
- 
 	uint64_t irq_addresses[16];        
 	uint64_t idt_address;
-	uint64_t idt_ptr[2]={0,};
-	uint64_t out_ptr[2]={0,};
  
    //remapping the PIC 
 	outb(0x20, 0x11);
@@ -173,6 +103,7 @@ void idt_init(void) {
 	idt_ptr[0] = (sizeof (struct IDTDescr) * 256 - 1) + ((idt_address & 0xffffffffffff) << 16);
 	idt_ptr[1] = (idt_address >> 48) & 0xffff;
 
+	set_IDT_entry(&IDT[3],(uint64_t)bp, 0x08, 1, 0x8e);
 	for(int i=0; i<16; i++){
 		set_IDT_entry(&IDT[32+i], irq_addresses[i], 0x08, 0, 0x8e);
 	}
@@ -180,20 +111,26 @@ void idt_init(void) {
 	__asm__ __volatile__ (
 		"cli \t\n"
 		"movq %0, %%rdx\t\n"
-		"lidt (%%rdx)\t\n"
-		"sti\t\n"
-		"sidt (%%rbx)":
-		:"a"(&idt_ptr), "b"(&out_ptr));
+		"lidt (%%rdx)\t\n":
+		//"sti\t\n":
+		:"a"(&idt_ptr));
 
 	return;
 }
 
-
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
+	gdt_init();
 	idt_init();
 	terminal_initialize();
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello Kernel");
+
+	__asm__ __volatile__ (
+		"int3"
+		::);
+	
+	terminal_writestring("end");
+	while(1);
 }

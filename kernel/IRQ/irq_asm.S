@@ -14,6 +14,7 @@
 .global irq13
 .global irq14
 .global irq15
+.global bp
  
 .global irq0_handler
 .global irq1_handler
@@ -31,6 +32,7 @@
 .global irq13_handler
 .global irq14_handler
 .global irq15_handler
+.global bp_handler
  
 .extern irq0_handler
 .extern irq1_handler
@@ -83,69 +85,104 @@
   pop %rax
 .endm
 
+bp:
+  //save_registers
+  //call bp_handler
+  //restore_registers
+  iretq
+
 irq0:
   save_registers
   call irq0_handler
   restore_registers
-  iret
+  iretq
  
 irq1:
+  save_registers
   call irq1_handler
-  iret
+  restore_registers
+  iretq
  
 irq2:
+  save_registers
   call irq2_handler
-  iret
+  restore_registers
+  iretq
  
 irq3:
+  save_registers
   call irq3_handler
-  iret
+  iretq
  
 irq4:
+  save_registers
   call irq4_handler
-  iret
+  restore_registers
+  iretq
  
 irq5:
+  save_registers
   call irq5_handler
-  iret
+  restore_registers
+  iretq
  
 irq6:
+  save_registers
   call irq6_handler
-  iret
+  restore_registers
+  iretq
  
 irq7:
+  save_registers
   call irq7_handler
-  iret
+  restore_registers
+  iretq
  
 irq8:
+  save_registers
   call irq8_handler
-  iret
+  restore_registers
+  iretq
  
 irq9:
+  save_registers
   call irq9_handler
-  iret
+  restore_registers
+  iretq
  
 irq10:
+  save_registers
   call irq10_handler
-  iret
+  restore_registers
+  iretq
  
 irq11:
+  save_registers
   call irq11_handler
-  iret
+  restore_registers
+  iretq
  
 irq12:
+  save_registers
   call irq12_handler
-  iret
+  restore_registers
+  iretq
  
 irq13:
+  save_registers
   call irq13_handler
-  iret
+  restore_registers
+  iretq
  
 irq14:
+  save_registers
   call irq14_handler
-  iret
+  restore_registers
+  iretq
  
 irq15:
+  save_registers
   call irq15_handler
-  iret
+  restore_registers
+  iretq
  

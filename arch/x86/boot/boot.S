@@ -12,7 +12,7 @@
 .set MB_CHECKSUM, -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT2_ARCHITECTURE_I386 + MB_HEADER_LEN)
 
 .set STACK_SIZE, 0x1000
-.set STACK_ALIGNMENT, 8
+.set STACK_ALIGNMENT, 0x8
 
 .section .multiboot
 multiboot_header:
@@ -46,12 +46,21 @@ stack_bottom:
 .comm stack, STACK_SIZE, STACK_ALIGNMENT
 stack_top:
 
+.align 0x10
+.global stack2
+stack2_bottom:
+.comm stack2, STACK_SIZE, STACK_ALIGNMENT
+stack2_top:
+
 .section .rodata
 /* setup gdt */
 .align GDT_TABLE_ALIGNMENT
 gdt:
 	.8byte	GDT_NULL_ENTRY
 	.8byte	GDT_KERNEL_CODE
+	.8byte	GDT_KERNEL_DATA
+	.8byte	GDT_KERNEL_CODE32
+	.8byte	GDT_KERNEL_DATA32
 gdt_end:
 	.skip (GDT_TABLE_SIZE - (gdt_end-gdt))
 gdt_ptr:
@@ -64,7 +73,18 @@ gdt_ptr:
 .type _start, @function
 _start:
 	/* now we have a stack */
-	movl $stack_top, %esp
+	cli
+	lgdt gdt_ptr
+	ljmp $0x18, $_main
+
+_main:
+	movw $0x20, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	movw %ax, %ss
+	movl $stack+STACK_SIZE, %esp
 
 	/* check if processor supports long mode */
 	call is_64_arch_avail
@@ -74,14 +94,11 @@ _start:
 	call setup_page_tables
 	call enable_paging
 
-	lgdt gdt_ptr
-
 	/* Transit to IA32-e mode */
 	ljmp $GDT_ENTRY_SIZE, $_start64
 
 	cli
-	hlt
-1:
+1:	hlt
 	jmp 1b
 
 is_cpuid_avail:
@@ -211,7 +228,7 @@ enable_paging:
 
 	/* Enable paging */
 	mov %cr0, %eax
-	or $(KERNEL_CR0), %eax
+	or $(CONTROL_REGISTER0_PAGE), %eax
 	mov %eax, %cr0
 	
 	ret
@@ -228,14 +245,14 @@ error:
 .global _start64
 .type _start64, @function
 _start64:
-	mov $0, %ax
-	mov %ss, %ax
-	mov %ds, %ax
-	mov %es, %ax
-	mov %fs, %ax
-	mov %gs, %ax
+	movw $0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	movw %ax, %ss
 
 	call kernel_main
 
-1:	hlt
-	jmp 1b
+2:	hlt
+	jmp 2b
