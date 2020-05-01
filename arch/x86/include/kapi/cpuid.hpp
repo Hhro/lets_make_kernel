@@ -3,6 +3,8 @@
 
 #include <kapi/const.hpp>
 
+const u32 kExtendedCpuidNR = 0x800000000
+
 class CpuidRegs {
  private:
   u32 eax_, ebx_, ecx_, edx_;
