@@ -37,7 +37,7 @@ build-arch:
 	${MAKE} -C ${ARCH_DIR}
 
 install: clean build-kernel build-arch
-	${CXX} -mcmodel=kernel -I./include -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -nostdlib ${ARCH_DIR}/boot/boot.o ${ARCH_DIR}/io/io.o kernel/kernel.o kernel/keyboard/keyboard.o -g -lgcc -Wl,--build-id=none
+	${CXX} -mcmodel=kernel -I./include -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -nostdlib ${ARCH_DIR}/asm/io.o ${ARCH_DIR}/asm/load.o ${ARCH_DIR}/boot/boot.o ${ARCH_DIR}/descriptors/gdt.o ${ARCH_DIR}/descriptors/idt.o  kernel/kernel.o  kernel/terminal.o kernel/keyboard/keyboard.o -g -lgcc -Wl,--build-id=none
 
 ###### Clean-up
 clean:
