@@ -3,3 +3,4 @@ toolchain/build
 *.bin
 *.iso
 isodir/
+.vscode/
