@@ -1,4 +1,4 @@
-DIRS = boot io
+DIRS = boot asm descriptors
 
 .PHONY: clean
 
