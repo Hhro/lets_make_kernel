@@ -26,15 +26,15 @@ add_subdirectory("arch/${ARCH}")
 add_subdirectory(kernel)
 
 add_executable(fried.bin kernel/kernel.cpp $<TARGET_OBJECTS:boot>)
-set_source_files_properties(
-  $<TARGET_OBJECTS:boot>
-  PROPERTIES
-  EXTERNAL_OBJECT true
-  GENERATED true
-)
-add_custom_target(iso ALL
+
+add_custom_command(OUTPUT fried.iso
     COMMAND mkdir -p ./isodir/boot/grub
     COMMAND cp fried.bin ./isodir/boot/fried.bin
     COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/grub.cfg" isodir/boot/grub/grub.cfg
     COMMAND grub-mkrescue -o fried.iso isodir
-    DEPENDS fried.bin)
+    DEPENDS fried.bin grub.cfg
+)
+
+add_custom_target(iso ALL 
+    DEPENDS fried.iso
+)
