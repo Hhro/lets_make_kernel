@@ -1,10 +1,10 @@
-#include <kapi/cr>
-#include <kapi/gdt>
-#include <kapi/msr>
-#include <kapi/kernel>
-#include <kapi/mmu>
-#include <kapi/eflags>
-#include <kapi/cpuid>
+#include <kapi/cr.hpp>
+#include <kapi/gdt.hpp>
+#include <kapi/msr.hpp>
+#include <kapi/kernel.hpp>
+#include <kapi/mmu.hpp>
+#include <kapi/eflags.hpp>
+#include <kapi/cpuid.hpp>
 
 #include "multiboot2.h"
 
@@ -184,7 +184,7 @@ enable_paging:
 	/* Enable long mode */
 	mov $MSR_EFER, %ecx
 	rdmsr
-	or $(MSR_EFER_LME), %eax
+	or $(MSR_EFER_LME_BIT), %eax
 	wrmsr
 
 	/* Enable paging */
