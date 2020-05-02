@@ -37,7 +37,7 @@ class CpuInfo {
 
   // getters & setters
   int cpuid_level() const { return cpuid_level_; }
-  int extended_cpuid_level() const { return extended_cpuid_level_; }
+  u32 extended_cpuid_level() const { return extended_cpuid_level_; }
   void set_cpuid_level(int cpuid_level) { cpuid_level_ = cpuid_level; }
   void set_cpu_vendor_id(char* cpu_vendor_id) {
       memcpy(cpu_vendor_id_, cpu_vendor_id, kCpuVendorIdLen);
