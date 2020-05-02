@@ -17,6 +17,10 @@ if(TOOLCHAIN_PATH)
     set(CMAKE_FIND_ROOT_PATH  ${TOOLCHAIN_PATH})
 endif()
 
+set(TRIPLE x86_64-elf)
+set(CMAKE_C_COMPILER_TARGET ${TRIPLE})
+set(CMAKE_CXX_COMPILER_TARGET ${TRIPLE})
+
 enable_language(ASM)
 
 include_directories(include)
