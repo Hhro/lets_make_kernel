@@ -22,7 +22,7 @@
     ((((flags)) & 0x0F ) << 52) |   \
     (((((limit)) >> 16) & 0x0F ) << 48) |   \
     ((((access)) & 0xFF) << 40) |   \
-    ((((base)) & 0x0FFF) << 16) |   \
+    ((((base)) & 0xFFFFFF) << 16) |   \
     (((limit)) & 0xFFFF)    \
 )
 
