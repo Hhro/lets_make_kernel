@@ -44,7 +44,8 @@ const u32 kFeatureLeaves[kFeatureLeafCnt][3] = {
 // Also, new feature index must be defined according to the following rules.
 // 1. small leaf(eax) => small index.
 // 2. small subleaf(ecx) => small index.
-// 3. if new feature index would change others, you need to fix them all.
+// 3. EBX < ECX < EDX
+// 4. if new feature index would corrupt others, you need to fix them all.
 
 const int kFeatureIdxCnt = 6;
 const int kFeatureCnt = kFeatureIdxCnt * 32;
