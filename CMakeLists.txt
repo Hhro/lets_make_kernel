@@ -42,6 +42,16 @@ add_custom_command(OUTPUT fried.iso
     DEPENDS fried.bin grub.cfg
 )
 
+add_custom_target(run-iso
+    COMMAND qemu-system-x86_64 -cdrom ./fried.iso -curses
+    DEPENDS fried.iso
+)
+
+add_custom_target(debug-iso
+    COMMAND qemu-system-x86_64 -cdrom ./fried.iso -curses -s -S
+    DEPENDS fried.iso
+)
+
 add_custom_target(iso ALL 
     DEPENDS fried.iso
 )
