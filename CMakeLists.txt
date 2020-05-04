@@ -20,6 +20,7 @@ endif()
 set(TRIPLE x86_64-elf)
 set(CMAKE_C_COMPILER_TARGET ${TRIPLE})
 set(CMAKE_CXX_COMPILER_TARGET ${TRIPLE})
+set(CMAKE_ASM_COMPILER_TARGET ${TRIPLE})
 
 enable_language(ASM)
 
@@ -29,7 +30,9 @@ include(arch/${ARCH}/defconfig.cmake)
 add_subdirectory("arch/${ARCH}")
 add_subdirectory(kernel)
 
-add_executable(fried.bin kernel/kernel.cpp $<TARGET_OBJECTS:boot>)
+add_dependencies(kernel arch)
+
+add_executable(fried.bin $<TARGET_OBJECTS:arch> $<TARGET_OBJECTS:kernel>)
 
 add_custom_command(OUTPUT fried.iso
     COMMAND mkdir -p ./isodir/boot/grub
