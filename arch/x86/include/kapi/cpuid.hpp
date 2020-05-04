@@ -9,6 +9,8 @@ class CpuidRegs {
  private:
   u32 eax_, ebx_, ecx_, edx_;
  public:
+  CpuidRegs():
+    eax_(0), ebx_(0), ecx_(0), edx_(0) {}
   CpuidRegs(u32 eax, u32 ebx, u32 ecx, u32 edx):
     eax_(eax), ebx_(ebx), ecx_(ecx), edx_(edx) {}
 
