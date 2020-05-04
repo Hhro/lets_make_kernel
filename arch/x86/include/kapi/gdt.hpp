@@ -19,8 +19,8 @@
 #define PREPARE_GDT_ENTRY(base, limit, flags, access)   \
 (\
     (((((base))>>24) & 0xFF) << 56) |   \
-    ((((flags)) & 0x0F ) << 52) |   \
-    (((((limit)) >> 16) & 0x0F ) << 48) |   \
+    ((((flags)) & 0x0F) << 52) |   \
+    (((((limit)) >> 16) & 0x0F) << 48) |   \
     ((((access)) & 0xFF) << 40) |   \
     ((((base)) & 0xFFFFFF) << 16) |   \
     (((limit)) & 0xFFFF)    \
@@ -29,7 +29,7 @@
 /* Null descriptor, never be referenced */
 #define GDT_NULL_ENTRY PREPARE_GDT_ENTRY(0, 0, 0, 0)
 
-#define GDT_KERNEL_CODE PREPARE_GDT_ENTRY(0, 0,\
+#define GDT_KERNEL_CODE PREPARE_GDT_ENTRY(0, 0, \
                     GDT_FLAG_LONG, \
                     GDT_ACCESS_PRESENT | \
                     GDT_ACCESS_PRIV_RING0 | \
@@ -40,5 +40,4 @@
 
 /* 0x100 entries per GDT */
 #define GDT_TABLE_SIZE  0x800
-                    
 #endif
