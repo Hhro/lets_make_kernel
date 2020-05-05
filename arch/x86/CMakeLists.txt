@@ -1,6 +1,7 @@
 set(ARCH_FOLDERS
+    asm
     boot
-    # Add folder here
+    descriptors
     )
 
 set(ARCH_SRCS)
