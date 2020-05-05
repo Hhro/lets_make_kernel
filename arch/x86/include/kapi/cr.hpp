@@ -19,6 +19,6 @@ const u32 CR0_PG = _BIT(CR0_PG_BIT);
 
 const u32 CR4_PAE_BIT = 5;
 const u32 CR4_PAE = _BIT(CR4_PAE_BIT);
-//#endif // __ASSEMBLY__
+#endif // __ASSEMBLY__
 
 #endif  // _KAPI_X86_CR_H
