@@ -1,0 +1,7 @@
+toolchain/build
+*.o
+*.bin
+*.iso
+isodir/
+.vscode/
+build/

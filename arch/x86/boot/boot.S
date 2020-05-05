@@ -184,7 +184,7 @@ enable_paging:
 	/* Enable long mode */
 	mov $MSR_EFER, %ecx
 	rdmsr
-	or $(MSR_EFER_LME), %eax
+	or $(MSR_EFER_LME_BIT), %eax
 	wrmsr
 
 	/* Enable paging */

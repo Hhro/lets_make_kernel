@@ -17,3 +17,12 @@ This kernel could be run on QEMU, use this command:
 ```bash
 make run-iso
 ```
+
+# Build with cmake
+
+```bash
+mkdir build
+cd build
+CC=../toolchain/build/bin/x86_64-elf-gcc CXX=../toolchain/build/bin/x86_64-elf-g++ cmake ..
+make
+```
