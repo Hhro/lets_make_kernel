@@ -1,6 +1,5 @@
 set(KERNEL_FOLDERS
-    terminal
-    keyboard
+    # Add folder here
 )
 
 set(KERNEL_SRCS)
