@@ -6,15 +6,15 @@ bool IsFlagChangable(const u32 flag) {
     u32 f1, f2;
 
     asm volatile(
-        "pushfl\n"
-        "pushfl\n"
-        "popl %0\n"
-        "movl %0, %1\n"
-        "xorl %2, %0\n"
+        "pushf\n"
+        "pushf\n"
+        "pop %0\n"
+        "mov %0, %1\n"
+        "xor %2, %0\n"
         "push %0\n"
-        "popfl\n"
-        "popl %0"
-        "popfl\n"
+        "popf\n"
+        "pop %0\n"
+        "popf\n"
         : "=&r" (f1), "=&r" (f2)
         : "ir" (flag)
     );
