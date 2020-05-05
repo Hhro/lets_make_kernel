@@ -67,7 +67,6 @@ const int kFeatureCnt = kFeatureIdxCnt * 32;
 #define X86_FEATURE_CMPXCHG16B (0 * 32 + 13)  // CMPXCHG16B instruction
 #define X86_FEATURE_XTPRUPDATE (0 * 32 + 14)  // xTPR update control
 #define X86_FEATURE_PDCM (0 * 32 + 15)        // perfmon and debug capability
-#define X86_FEATURE_RSVD (0 * 32 + 16)        // reserved
 #define X86_FEATURE_PCID (0 * 32 + 17)        // process-context identifiers
 #define X86_FEATURE_DCA (0 * 32 + 18)         // support prefetch data from a memory mapped device
 #define X86_FEATURE_SSE41 (0 * 32 + 19)       // SSE4.1
@@ -95,7 +94,6 @@ const int kFeatureCnt = kFeatureIdxCnt * 32;
 #define X86_FEATURE_MCE (1 * 32 + 7)
 #define X86_FEATURE_CX8 (1 * 32 + 8)
 #define X86_FEATURE_APIC (1 * 32 + 9)
-#define X86_FEATURE_RSVD (1 * 32 + 10)
 #define X86_FEATURE_SEP (1 * 32 + 11)
 #define X86_FEATURE_MTRR (1 * 32 + 12)
 #define X86_FEATURE_PGE (1 * 32 + 13)
@@ -105,7 +103,6 @@ const int kFeatureCnt = kFeatureIdxCnt * 32;
 #define X86_FEATURE_PSE36 (1 * 32 + 17)
 #define X86_FEATURE_PSN (1 * 32 + 18)
 #define X86_FEATURE_CLFSH (1 * 32 + 19)
-#define X86_FEATURE_RSVD (1 * 32 + 20)
 #define X86_FEATURE_DS (1 * 32 + 21)
 #define X86_FEATURE_ACPI (1 * 32 + 22)
 #define X86_FEATURE_MMX (1 * 32 + 23)
@@ -115,7 +112,6 @@ const int kFeatureCnt = kFeatureIdxCnt * 32;
 #define X86_FEATURE_SS (1 * 32 + 27)
 #define X86_FEATURE_HTT (1 * 32 + 28)
 #define X86_FEATURE_TM (1 * 32 + 29)
-#define X86_FEATURE_RSVD (1 * 32 + 30)
 #define X86_FEATURE_PBE (1 * 32 + 31)
 
 // Intel CPU features eax = 0x00000007, ecx = 0, EBX, feature idx 2
