@@ -30,7 +30,7 @@ static inline void cpuid(CpuidRegs* regs) {
     asm volatile(
         "cpuid"
         : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
-        : "m" (regs->eax()), "m" (regs->ecx())
+        : "r" (regs->eax()), "r" (regs->ecx())
         : "memory"
     );
 
