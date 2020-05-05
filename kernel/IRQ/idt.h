@@ -14,9 +14,9 @@
 #define GDT_FLAG_UPPER_L 0x20
 #define GDT_FLAG_UPPER_G 0x80
 
-#define GDT_FLAG_LOWER_KCODE (GDT_TYPE_CODE|GDT_FLAG_LOWER_S|GDT_FLAG_LOWER_DPL0|GDT_FLAG_LOWER_P)
+#define GDT_FLAG_LOWER_KCODE (GDT_FLAG_LOWER_S|GDT_FLAG_LOWER_DPL0|GDT_FLAG_LOWER_P)
 #define GDT_FLAG_UPPER_KCODE (GDT_FLAG_UPPER_G|GDT_FLAG_UPPER_L)
-#define GDT_FLAG_LOWER_KDATA (GDT_TYPE_DATA|GDT_FLAG_LOWER_S|GDT_FLAG_LOWER_DPL0|GDT_FLAG_LOWER_P)
+#define GDT_FLAG_LOWER_KDATA (GDT_FLAG_LOWER_S|GDT_FLAG_LOWER_DPL0|GDT_FLAG_LOWER_P)
 #define GDT_FLAG_UPPER_KDATA (GDT_FLAG_UPPER_G|GDT_FLAG_UPPER_L)
 #define GDT_FLAG_LOWER_TSS (GDT_FLAG_LOWER_DPL0|GDT_FLAG_LOWER_P)
 #define GDT_FLAG_UPPER_TSS GDT_FLAG_UPPER_G
@@ -64,7 +64,19 @@ struct TSSSEGMENT {
 };
 #pragma pack(pop)
 
-void outb(uint8_t v, uint16_t port);
+static inline void outb(uint16_t port, uint8_t v){
+    __asm__ __volatile__("outb %0,%1" : : "a" (v), "dN" (port));
+}
+
+static inline uint8_t inb(uint16_t port)
+{
+    uint8_t ret;
+    asm volatile ( "inb %1, %0"
+                   : "=a"(ret)
+                   : "Nd"(port) );
+    return ret;
+}
+
 void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type);
 void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t limit, uint8_t upperflag, uint8_t lowerflag, uint8_t type);
 void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t limit, uint8_t upperflag, uint8_t lowerflag, uint8_t type);
@@ -85,5 +97,9 @@ extern "C" void irq12_handler(void);
 extern "C" void irq13_handler(void);
 extern "C" void irq14_handler(void);
 extern "C" void irq15_handler(void);
+extern "C" void break_point_handler(void);
+extern "C" void double_fault_handler(void);
+
+
 extern "C" void terminal_putchar(char);
 #endif

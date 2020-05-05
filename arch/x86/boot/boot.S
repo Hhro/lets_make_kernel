@@ -98,8 +98,7 @@ _main:
 	ljmp $GDT_ENTRY_SIZE, $_start64
 
 	cli
-1:	hlt
-	jmp 1b
+	hlt
 
 is_cpuid_avail:
 	// Check cpuid instruction is supported by attempting to 

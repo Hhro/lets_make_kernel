@@ -14,8 +14,10 @@
 .global irq13
 .global irq14
 .global irq15
-.global bp
+.global break_point
+.global double_fault
  
+ /*
 .global irq0_handler
 .global irq1_handler
 .global irq2_handler
@@ -33,6 +35,7 @@
 .global irq14_handler
 .global irq15_handler
 .global bp_handler
+*/
  
 .extern irq0_handler
 .extern irq1_handler
@@ -50,6 +53,7 @@
 .extern irq13_handler
 .extern irq14_handler
 .extern irq15_handler
+.extern double_fault_handler
 
 .macro save_registers
   push %rax
@@ -85,10 +89,17 @@
   pop %rax
 .endm
 
-bp:
-  //save_registers
-  //call bp_handler
-  //restore_registers
+break_point:
+  save_registers
+  call bp_handler
+  restore_registers
+  iretq
+
+double_fault:
+  save_registers
+  call double_fault_handler
+  restore_registers
+  add $0x8, %rsp
   iretq
 
 irq0:

@@ -15,7 +15,8 @@ uint64_t gdt_ptrr[2]={0,};
 
 struct TSSSEGMENT TSS;
 
-extern "C" int bp();
+extern "C" int break_point();
+extern "C" int double_fault();
 extern "C" int irq0();
 extern "C" int irq1();
 extern "C" int irq2();
@@ -47,11 +48,10 @@ void gdt_init(void){
 
 	set_GDT_entry8(&GDT[0], 0, 0, 0, 0, 0);
 	set_GDT_entry8(&GDT[1], 0, 0xfffff, GDT_FLAG_UPPER_KCODE, GDT_FLAG_LOWER_KCODE, GDT_TYPE_CODE);
-	set_GDT_entry8(&GDT[2], 0, 0xfffff, GDT_FLAG_UPPER_KDATA, GDT_FLAG_LOWER_KDATA, GDT_TYPE_CODE);
+	set_GDT_entry8(&GDT[2], 0, 0xfffff, GDT_FLAG_UPPER_KDATA, GDT_FLAG_LOWER_KDATA, GDT_TYPE_DATA);
 	set_GDT_entry16(((struct GDTDescr_16 *)&GDT[3]), (uint64_t)&TSS, sizeof(struct TSSSEGMENT)-1, GDT_FLAG_UPPER_TSS, GDT_FLAG_LOWER_TSS, GDT_TYPE_TSS);
 
 	tss_init(&TSS);
-
 	gdt_address = (uint64_t)GDT ;
 	gdt_ptrr[0] = (sizeof (struct GDTDescr_8) * 5 - 1) + ((gdt_address & 0xffffffffffff) << 16);
 	gdt_ptrr[1] = (gdt_address >> 48) & 0xffff;
@@ -60,6 +60,12 @@ void gdt_init(void){
 		"cli \t\n"
 		"movq %0, %%rdx\t\n"
 		"lgdt (%%rdx)\t\n"
+		"movw $0x10, %%ax\t\n"
+		"movw %%ax, %%ds\t\n"
+		"movw %%ax, %%es\t\n"
+		"movw %%ax, %%fs\t\n"
+		"movw %%ax, %%gs\t\n"
+		"movw %%ax, %%ss\t\n"
 		"sti\t\n"
 		"movw $0x18, %%di\t\n"
 		"ltr %%di\t\n":
@@ -71,13 +77,13 @@ void idt_init(void) {
 	uint64_t idt_address;
  
    //remapping the PIC 
-	outb(0x20, 0x11);
+	outb(0x20, 0x11); // start initialization sequence
     outb(0xA0, 0x11);
-    outb(0x21, 0x20);
+    outb(0x21, 0x20); // set vector offset
     outb(0xA1, 40);
-    outb(0x21, 0x04);
-    outb(0xA1, 0x02);
-    outb(0x21, 0x01);
+    outb(0x21, 0x04); // tell master PIC that there is a slave PIC at IRQ2 (0100)
+    outb(0xA1, 0x02); // tell slave PIC its cascade identity
+    outb(0x21, 0x01); // tell 8086/88 mode (Gives additional information about environment)
     outb(0xA1, 0x01);
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
@@ -103,7 +109,10 @@ void idt_init(void) {
 	idt_ptr[0] = (sizeof (struct IDTDescr) * 256 - 1) + ((idt_address & 0xffffffffffff) << 16);
 	idt_ptr[1] = (idt_address >> 48) & 0xffff;
 
-	set_IDT_entry(&IDT[3],(uint64_t)bp, 0x08, 1, 0x8e);
+	set_IDT_entry(&IDT[3],(uint64_t)break_point, 0x08, 1, 0x8f); // set break_point handler
+	set_IDT_entry(&IDT[8],(uint64_t)double_fault, 0x08, 1, 0x8e);
+
+
 	for(int i=0; i<16; i++){
 		set_IDT_entry(&IDT[32+i], irq_addresses[i], 0x08, 0, 0x8e);
 	}
@@ -111,8 +120,8 @@ void idt_init(void) {
 	__asm__ __volatile__ (
 		"cli \t\n"
 		"movq %0, %%rdx\t\n"
-		"lidt (%%rdx)\t\n":
-		//"sti\t\n":
+		"lidt (%%rdx)\t\n"
+		"sti\t\n":
 		:"a"(&idt_ptr));
 
 	return;
@@ -124,6 +133,7 @@ void kernel_main(void)
 	gdt_init();
 	idt_init();
 	terminal_initialize();
+	
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello Kernel");
 
@@ -132,5 +142,10 @@ void kernel_main(void)
 		::);
 	
 	terminal_writestring("end");
-	while(1);
+	
+	__asm__ __volatile__(
+		"end_loop: hlt\t\n"
+		"jmp end_loop"
+		::
+	);
 }

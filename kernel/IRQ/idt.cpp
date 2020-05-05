@@ -1,10 +1,6 @@
 #include "idt.h"
 #include<stdint.h>
 
-void outb(uint8_t v, uint16_t port){
-    __asm__ __volatile__("outb %0,%1" : : "a" (v), "dN" (port));
-}
-
 void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type){
     entry->ist = ((ist & 0x7)&0xff);
     entry->offset_1 = (offset)&0xffff;
@@ -19,7 +15,7 @@ void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, 
 
 void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t limit, uint8_t upperflag, uint8_t lowerflag, uint8_t type){
     entry->lowerlimit = limit & 0xffff;
-    entry->upperlimit_upperflag = (limit >> 16)&0xff | upperflag;
+    entry->upperlimit_upperflag = upperflag | (limit >> 16)&0x0f;
     entry->type_lowerflag = lowerflag | type;
     entry->base_address1 = baseaddress & 0xffff;
     entry->base_address2 = (baseaddress >> 16) & 0xff;
@@ -39,10 +35,17 @@ void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t 
     entry->reserved = 0;
 }
 
-extern "C" void terminal_putchar(char);
-
 extern "C" void bp_handler(void){
     terminal_putchar('#');
+}
+
+extern "C" void double_fault_handler(void){
+    terminal_putchar('@');
+    __asm__ __volatile__(
+		"end_loop: hlt\t\n"
+		"jmp end_loop"
+		::
+	);
 }
 
 extern "C" void irq0_handler(void) {
@@ -50,8 +53,13 @@ extern "C" void irq0_handler(void) {
     outb(0x20, 0x20); //EOI
 }
  
-extern "C" void irq1_handler(void) {
-	  outb(0x20, 0x20); //EOI
+extern "C" void irq1_handler(void) { //key board
+    uint8_t scancode;
+    scancode = inb(0x60);
+
+
+    
+	outb(0x20, 0x20); //EOI
 }
  
 extern "C" void irq2_handler(void) {
