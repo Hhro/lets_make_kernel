@@ -1,4 +1,4 @@
-DIRS = boot
+DIRS = boot kernel
 
 .PHONY: clean
 
