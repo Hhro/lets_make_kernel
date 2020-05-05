@@ -3,7 +3,7 @@
 
 #include <kapi/const.hpp>
 
-const u32 kExtendedCpuidNR = 0x800000000
+const u32 kExtendedCpuidNR = 0x800000000;
 
 class CpuidRegs {
  private:

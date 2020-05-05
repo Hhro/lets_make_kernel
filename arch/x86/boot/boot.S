@@ -1,12 +1,12 @@
-#include <kapi/cr>
-#include <kapi/gdt>
-#include <kapi/msr>
-#include <kapi/kernel>
-#include <kapi/mmu>
-#include <kapi/eflags>
-#include <kapi/cpuid>
+#include <kapi/cr.hpp>
+#include <kapi/gdt.hpp>
+#include <kapi/msr.hpp>
+#include <kapi/mmu.hpp>
+#include <kapi/flag.hpp>
 
 #include "multiboot2.h"
+
+#define X86_FEATURE_LM_AVAIL	(1 << 29)
 
 .set MB_HEADER_LEN, multiboot_header_end - multiboot_header
 .set MB_CHECKSUM, -(MULTIBOOT2_HEADER_MAGIC + MULTIBOOT2_ARCHITECTURE_I386 + MB_HEADER_LEN)
@@ -129,7 +129,7 @@ is_64_arch_avail:
 	// If 29th bit of %edx is set, Intel 64bit architecture is supported
 	mov $0x80000001, %eax
 	cpuid
-	and $(CPUID_64ARCH_AVAIL), %edx
+	and $(X86_FEATURE_LM_AVAIL), %edx
 	jz .no_longmode
 
 	xor %eax,%eax

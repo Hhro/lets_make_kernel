@@ -1,7 +1,6 @@
 #ifndef _KAPI_X86_MSR_INDEX_H
 #define _KAPI_X86_MSR_INDEX_H
 
-const int kMsrApicBase = 0x1B;
 #define MSR_APIC_BASE_BSP_BIT       8
 #define MSR_APIC_BASE_ENABLE_BIT    11
 #define MSR_APIC_BASE_BASE_BIT      12
@@ -13,6 +12,10 @@ const int kMsrApicBase = 0x1B;
 
 #define MSR_EFER            0xC0000080
 #define MSR_EFER_LME_BIT    8
-#define MSR_EFER_LME        _BITUL(MSR_EFER_LME_BIT)
+#define MSR_EFER_LME        _BIT(MSR_EFER_LME_BIT)
+
+#ifndef __ASSEMBLER__
+const int kMsrApicBase = 0x1B;
+#endif  //__ASSEMBLER__
 
 #endif  //_KAPI_X86_MSR_H

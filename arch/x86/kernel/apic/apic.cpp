@@ -1,2 +1,0 @@
-#include <kapi/apic.hpp>
-

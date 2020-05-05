@@ -10,8 +10,8 @@ OBJS = boot.o
 
 all: ${OBJS}
 
-boot.o: boot.S
-	${CXX} -c $^ -o $@
+%.o: %.S
+	${CXX} -c $^ -o $@ -I ../include
 
 clean:
 	rm -f $(OBJS)
