@@ -14,7 +14,7 @@ foreach(FOLDER ${KERNEL_FOLDERS})
     file(GLOB TMP
     "${FOLDER}/*.c"
     "${FOLDER}/*.cpp"
-    "${FOLDER}*.S")
+    "${FOLDER}/*.S")
     list(APPEND KERNEL_SRCS "${TMP}")
     if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${FOLDER}/CMakeLists.txt)
         add_subdirectory(${FOLDER})
