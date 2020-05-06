@@ -57,14 +57,14 @@ class CpuInfo {
     void DetectCpuFeatures();
     void SetupFeatures(const CpuidRegs *regs, const int feature_flag,
                        const int feature_idx);
-    inline bool CpuHas(const u32 feature) { return features()[feature]; }
+    inline bool CpuHas(const u32 feature) const { return features()[feature]; }
 
     // getters
     inline int cpuid_avail() const { return cpuid_avail_; }
     inline u32 leaf_cnt() const { return leaf_cnt_; }
     inline u32 extended_leaf_cnt() const { return extended_leaf_cnt_; }
     inline u32 leaf_7_subleaf_cnt() const { return leaf_7_subleaf_cnt_; }
-    inline bool* features() const { return features(); }
+    inline const bool* features() const { return features_; }
 
     // setters
     inline void set_cpuid_avail(const bool cpuid_avail) {

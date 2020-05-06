@@ -29,9 +29,9 @@ void CpuInfo::DetectBasicInfo() {
     CpuidRegs regs = CpuidRegs(0, 0, 0, 0);
     cpuid(&regs);
     set_leaf_cnt(regs.eax());
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[0]) = regs.edx();
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[4]) = regs.ecx();
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[8]) = regs.ebx();
+    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[0]) = regs.ebx();
+    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[4]) = regs.edx();
+    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[8]) = regs.ecx();
     set_cpu_vendor_id(cpu_vendor_id);
 
     // Get maximum input value for supported leaf 7 sub-leaves
@@ -82,7 +82,7 @@ void CpuInfo::set_features(const u32 feature_reg, const int feature_idx) {
     bool avail = false;
 
     for (int bit_idx=0; bit_idx < 32; bit_idx++) {
-        avail = feature_reg & _BIT(bit_idx);
+        avail = (feature_reg & _BIT(bit_idx)) != 0;
         features_[feature_idx * 32 + bit_idx] = avail;
     }
 }

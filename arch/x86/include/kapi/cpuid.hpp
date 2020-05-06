@@ -3,7 +3,7 @@
 
 #include <kapi/const.hpp>
 
-const u32 kExtendedCpuidNR = 0x800000000;
+const u32 kExtendedCpuidNR = 0x80000000;
 
 class CpuidRegs {
  private:
@@ -30,7 +30,7 @@ static inline void cpuid(CpuidRegs* regs) {
     asm volatile(
         "cpuid"
         : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx)
-        : "r" (regs->eax()), "r" (regs->ecx())
+        : "a" (regs->eax()), "c" (regs->ecx())
         : "memory"
     );
 
