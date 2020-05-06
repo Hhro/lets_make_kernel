@@ -2,7 +2,7 @@ TOOLCHAIN = ../../../toolchain/build/bin
 KTARGET = x86_64-elf
 
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
-CXXFLAGS = --ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fPIC
+CXXFLAGS = -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fPIC
 
 OBJS = boot.o
 
@@ -11,7 +11,7 @@ OBJS = boot.o
 all: ${OBJS}
 
 %.o: %.S
-	${CXX} -c $^ -o $@ -I ../include
+	${CXX} -c $^ -o $@ -I ../include ${CXXFLAGS}
 
 clean:
 	rm -f $(OBJS)

@@ -2,7 +2,7 @@ TOOLCHAIN = ../../../toolchain/build/bin
 KTARGET = x86_64-elf
 
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
-CXXFLAGS = -ffreestanding -O2 -Wall -Wextra -fexceptions -fno-rtti -fPIC
+CXXFLAGS = -ffreestanding -Wall -Wextra -fexceptions -fno-rtti -fPIC
 
 OBJS = cpuinfo.o flag.o
 
