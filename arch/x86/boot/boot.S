@@ -227,7 +227,7 @@ enable_paging:
 
 	/* Enable paging */
 	mov %cr0, %eax
-	or $(CONTROL_REGISTER0_PAGE), %eax
+	or $(CR0_PG), %eax
 	mov %eax, %cr0
 	
 	ret
