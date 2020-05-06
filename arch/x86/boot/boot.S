@@ -3,6 +3,7 @@
 #include <kapi/msr.hpp>
 #include <kapi/mmu.hpp>
 #include <kapi/flag.hpp>
+#include <kapi/kernel.hpp>
 
 #include "multiboot2.h"
 
