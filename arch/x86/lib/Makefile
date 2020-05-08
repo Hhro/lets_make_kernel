@@ -4,7 +4,7 @@ KTARGET = x86_64-elf
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 CXXFLAGS = --ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fPIC
 
-OBJS = memcpy.o memset.o
+OBJS = memcpy.o memset.o memcmp.o
 LIB = libkernel.a
 
 ${LIB}: ${OBJS}

@@ -2,6 +2,7 @@
 #include <kapi/cpuid.hpp>
 #include <kapi/cpuinfo.hpp>
 #include <kapi/flag.hpp>
+#include <kapi/string.hpp>
 
 bool CpuInfo::IsCpuidAvail() {
     bool avail;
@@ -85,4 +86,9 @@ void CpuInfo::set_features(const u32 feature_reg, const int feature_idx) {
         avail = (feature_reg & _BIT(bit_idx)) != 0;
         features_[feature_idx * 32 + bit_idx] = avail;
     }
+}
+
+bool CpuInfo::IsIntel(void) {
+    const char *cpu_vendor = cpu_vendor_id();
+    return memcmp(cpu_vendor, "GenuineIntel", 12) == 0;
 }
