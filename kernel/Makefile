@@ -18,7 +18,7 @@ kernel.o:
 	${CXX} -c kernel.cpp -o $@ ${CXXFLAGS} -I ../include -I ${ARCH_DIR}/include
 
 IRQ/idt.o:
-	${CXX} -c IRQ/idt.cpp  -o $@ ${CXXFLAGS}
+	${CXX} -c IRQ/idt.cpp  -o $@ ${CXXFLAGS} -I .
 
 IRQ/irq_asm.o:
 	${CXX} -c IRQ/irq_asm.S -o ${@} -mcmodel=kernel

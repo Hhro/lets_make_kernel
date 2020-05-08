@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kapi/cpuinfo.hpp>
-#include "IRQ/idt.h"
-#include "vga.h"
+#include "include/idt.h"
+#include "include/vga.h"
  
 extern "C" void kernel_main(void);
 

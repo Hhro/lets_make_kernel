@@ -1,4 +1,5 @@
-#include "idt.h"
+#include <include/idt.h>
+#include <include/keyboard.h>
 #include<stdint.h>
 
 void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type){
@@ -54,12 +55,24 @@ extern "C" void irq0_handler(void) {
 }
  
 extern "C" void irq1_handler(void) { //key board
-    uint8_t scancode;
+    uint8_t scancode, cv;
+    __asm__ __volatile(
+        "cli"::
+    );
+
     scancode = inb(0x60);
+    cv = inb(0x61);
 
+    outb(0x61, cv | 0x80);
+    outb(0x61, cv);
 
-    
+    terminal_putchar(asccode[scancode][0]);
+  
 	outb(0x20, 0x20); //EOI
+
+    __asm__ __volatile(
+        "sti"::
+    );
 }
  
 extern "C" void irq2_handler(void) {
