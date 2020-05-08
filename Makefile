@@ -43,8 +43,11 @@ ARCH_DIR = arch/${ARCH}
 build-arch:
 	${MAKE} -C ${ARCH_DIR}
 
+OBJS = ${ARCH_DIR}/boot/boot.o kernel/kernel.o ${ARCH_DIR}/kernel/cpuinfo.o ${ARCH_DIR}/kernel/flag.o
+CXXFLAGS = -lkernel -lgcc -Wl,--build-id=none -ffreestanding -O2 -nostdlib
 install: clean build-kernel build-arch
-	${CXX} -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -O2 -nostdlib ${ARCH_DIR}/boot/boot.o kernel/kernel.o ${ARCH_DIR}/kernel/cpuinfo.o ${ARCH_DIR}/kernel/flag.o -L ${ARCH_DIR}/lib -lkernel -lgcc -Wl,--build-id=none
+	${CXX} -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin ${OBJS} \
+			-L ${ARCH_DIR}/lib ${CXXFLAGS}
 
 ###### Clean-up
 clean:
