@@ -47,6 +47,7 @@ class CpuInfo {
 
     // methods
     bool IsCpuidAvail();
+    bool IsIntel();
     inline bool IsCpuidNRAvail(u32 eax) {
         if (eax < kExtendedCpuidNR)
             return eax <= leaf_cnt();
@@ -64,6 +65,7 @@ class CpuInfo {
     inline u32 leaf_cnt() const { return leaf_cnt_; }
     inline u32 extended_leaf_cnt() const { return extended_leaf_cnt_; }
     inline u32 leaf_7_subleaf_cnt() const { return leaf_7_subleaf_cnt_; }
+    inline const char* cpu_vendor_id() const { return cpu_vendor_id_; }
     inline const bool* features() const { return features_; }
 
     // setters

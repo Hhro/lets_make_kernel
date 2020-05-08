@@ -89,13 +89,25 @@ void terminal_writestring(const char *data) {
 }
 
 void kernel_main(void) {
-    CpuInfo cpu_info;
-    cpu_info.DetectBasicInfo();
-    cpu_info.DetectCpuFeatures();
-
-    /* Initialize terminal interface */
+    /* Initialize termianl interface */
     terminal_initialize();
 
-    /* Newline support is left as an exercise. */
+    CpuInfo cpu_info;
+    cpu_info.DetectBasicInfo();
+
+    if (!cpu_info.IsIntel()) {
+        terminal_writestring("[ERR] This kernel only supports intel arch");
+        asm volatile ("hlt");
+    }
+    cpu_info.DetectCpuFeatures();
+
+    // Intialize PIC at here
+    // if(cpu_info.CpuHas(X86_FEATURES_APIC)) {
+    //      InitApic();   
+    // }
+    // else {
+    //      Init8259();    
+    // }
+
     terminal_writestring("Hello, kernel World!\n");
 }
