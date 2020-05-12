@@ -8,7 +8,10 @@ TOOLCHAIN = toolchain/build/bin
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
 
 QEMU = qemu-system-x86_64
-QEMU_FLAGS = -curses # For remote development
+QEMU_FLAGS = -curses\
+			 -cpu Broadwell
+
+DEBUG_FLAGS = -gdb tcp::${DEBUG_PORT}
 
 CLEAN_OBJ = ${NAME}.bin ${NAME}.iso
 CLEAN_DIR = isodir
@@ -28,6 +31,10 @@ mk-iso: build-isodir
 run-iso: mk-iso
 	${QEMU} -cdrom ${NAME}.iso ${QEMU_FLAGS}
 
+##### Debug with Qemu
+debug: mk-iso
+	${QEMU} -cdrom ${NAME}.iso ${QEMU_FLAGS} ${DEBUG_FLAGS}
+
 ###### Build kernel
 build-kernel: 
 	${MAKE} -C kernel KTARGET=${KTARGET}
@@ -36,8 +43,11 @@ ARCH_DIR = arch/${ARCH}
 build-arch:
 	${MAKE} -C ${ARCH_DIR}
 
+OBJS = ${ARCH_DIR}/boot/boot.o kernel/kernel.o ${ARCH_DIR}/kernel/cpuinfo.o ${ARCH_DIR}/kernel/flag.o
+CXXFLAGS = -lkernel -lgcc -Wl,--build-id=none -ffreestanding -O2 -nostdlib
 install: clean build-kernel build-arch
-	${CXX} -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin -ffreestanding -O2 -nostdlib ${ARCH_DIR}/boot/boot.o kernel/kernel.o -lgcc -Wl,--build-id=none
+	${CXX} -z max-page-size=0x1000 -T ${ARCH_DIR}/boot/linker.ld -o ${NAME}.bin ${OBJS} \
+			-L ${ARCH_DIR}/lib ${CXXFLAGS}
 
 ###### Clean-up
 clean:

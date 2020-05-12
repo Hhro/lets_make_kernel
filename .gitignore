@@ -5,3 +5,5 @@ toolchain/build
 isodir/
 .vscode/
 build/
+.gdb*
+core

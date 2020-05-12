@@ -6,7 +6,7 @@
 #ifndef __ASSEMBLER__
 
 #include <kapi/const.hpp>
-bool IsFlagChangable(const u32 flag);
+bool IsFlagChangable(const u64 flag);
 
 #endif  // __ASSEMBLER
 
