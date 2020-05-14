@@ -1,5 +1,5 @@
 #include <kapi/idt.hpp>
-#include <include/keyboard.h>
+#include <keyboard.h>
 #include<stdint.h>
 
 void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type){

@@ -2,7 +2,7 @@ TOOLCHAIN = ../../../toolchain/build/bin
 KTARGET = x86_64-elf
 
 CXX = ${TOOLCHAIN}/${KTARGET}-g++
-CXXFLAGS = -z max-page-size=0x1000 --ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -fPIC -mcmodel=kernel -mno-red-zone  -Wa,--divide -g
+CXXFLAGS = -z max-page-size=0x1000 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -mcmodel=kernel -mno-red-zone  -Wa,--divide -g
 
 OBJS = boot.o
 
