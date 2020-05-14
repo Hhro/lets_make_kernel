@@ -2,9 +2,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <kapi/cpuinfo.hpp>
-#include "include/idt.h"
-#include "include/vga.h"
+#include <kapi/idt.hpp>
 #include <kapi/gdt.hpp>
+#include "include/vga.h"
  
 extern "C" void kernel_main(void);
 

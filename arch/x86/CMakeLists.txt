@@ -1,5 +1,6 @@
 set(ARCH_FOLDERS
     boot
+    kernel
     # Add folder here
     )
 
