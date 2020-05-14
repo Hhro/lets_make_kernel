@@ -1,11 +1,19 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#define RSHIFT 0x36
+#define LSHIFT 0x2a
+#define CAPSLOCK 0x3a
+
+uint8_t is_Caps;
+uint8_t on_Shift;
+
+
 char asccode[58][2] =       /* Array containing ascii codes for
 			       appropriate scan codes */
      {
        {   0,0   } ,
-       {  0x1b, 0x1b } ,
+       {  0x1b, 0x1b } , //ESC
        { '1','!' } ,
        { '2','@' } ,
        { '3','#' } ,
@@ -18,8 +26,8 @@ char asccode[58][2] =       /* Array containing ascii codes for
        { '0',')' } ,
        { '-','_' } ,
        { '=','+' } ,
-       {   8,8   } ,
-       {   9,9   } ,
+       {   8,8   } , //backsapce
+       {   9,9   } , //tab
        { 'q','Q' } ,
        { 'w','W' } ,
        { 'e','E' } ,
@@ -32,8 +40,8 @@ char asccode[58][2] =       /* Array containing ascii codes for
        { 'p','P' } ,
        { '[','{' } ,
        { ']','}' } ,
-       {  13,13  } ,
-       {   0,0   } ,
+       {  13,13  } , //enter
+       {   0,0   } , //Lctrl
        { 'a','A' } ,
        { 's','S' } ,
        { 'd','D' } ,
@@ -46,7 +54,7 @@ char asccode[58][2] =       /* Array containing ascii codes for
        { ';',':' } ,
        {  39,34  } ,
        { '`','~' } ,
-       {   0,0   } ,
+       {   0,0   } , //Lshift
        { '\\','|'} ,
        { 'z','Z' } ,
        { 'x','X' } ,
@@ -58,10 +66,10 @@ char asccode[58][2] =       /* Array containing ascii codes for
        { ',','<' } ,
        { '.','>' } ,
        { '/','?' } ,
+       {   0,0   } , //Rshift
        {   0,0   } ,
-       {   0,0   } ,
-       {   0,0   } ,
-       { ' ',' ' } ,
+       {   0,0   } , //Lalt
+       { ' ',' ' } , //space bar
    };
 
 #endif

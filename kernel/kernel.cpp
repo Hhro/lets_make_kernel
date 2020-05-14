@@ -4,6 +4,7 @@
 #include <kapi/cpuinfo.hpp>
 #include "include/idt.h"
 #include "include/vga.h"
+#include <kapi/gdt.hpp>
  
 extern "C" void kernel_main(void);
 
@@ -46,10 +47,10 @@ void tss_init(struct TSSSEGMENT * tss){
 void gdt_init(void){
 	uint64_t gdt_address;
 
-	set_GDT_entry8(&GDT[0], 0, 0, 0, 0, 0);
-	set_GDT_entry8(&GDT[1], 0, 0xfffff, GDT_FLAG_UPPER_KCODE, GDT_FLAG_LOWER_KCODE, GDT_TYPE_CODE);
-	set_GDT_entry8(&GDT[2], 0, 0xfffff, GDT_FLAG_UPPER_KDATA, GDT_FLAG_LOWER_KDATA, GDT_TYPE_DATA);
-	set_GDT_entry16(((struct GDTDescr_16 *)&GDT[3]), (uint64_t)&TSS, sizeof(struct TSSSEGMENT)-1, GDT_FLAG_UPPER_TSS, GDT_FLAG_LOWER_TSS, GDT_TYPE_TSS);
+	set_GDT_entry8(&GDT[0], 0, 0, 0, 0);
+	set_GDT_entry8(&GDT[1], 0, 0xfffff, GDT_FLAG_GRANUALRITY|GDT_FLAG_LONG, GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_EXECUTABLE|GDT_ACCESS_READABLE_WRITABLE);
+	set_GDT_entry8(&GDT[2], 0, 0xfffff, GDT_FLAG_GRANUALRITY|GDT_FLAG_LONG, GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_READABLE_WRITABLE);
+	set_GDT_entry16(((struct GDTDescr_16 *)&GDT[3]), (uint64_t)&TSS, sizeof(struct TSSSEGMENT)-1, GDT_FLAG_GRANUALRITY, GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_ACCESSED);
 
 	tss_init(&TSS);
 	gdt_address = (uint64_t)GDT ;
@@ -136,12 +137,6 @@ void kernel_main(void)
 	
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello Kernel");
-
-	__asm__ __volatile__ (
-		"int3"
-		::);
-	
-	terminal_writestring("end");
 	
 	__asm__ __volatile__(
 		"end_loop: hlt\t\n"

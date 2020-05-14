@@ -14,28 +14,6 @@ void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, 
     return;
 }
 
-void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t limit, uint8_t upperflag, uint8_t lowerflag, uint8_t type){
-    entry->lowerlimit = limit & 0xffff;
-    entry->upperlimit_upperflag = upperflag | (limit >> 16)&0x0f;
-    entry->type_lowerflag = lowerflag | type;
-    entry->base_address1 = baseaddress & 0xffff;
-    entry->base_address2 = (baseaddress >> 16) & 0xff;
-    entry->base_address3 = (baseaddress >> 24) & 0xff;
-
-    return;
-}
-
-void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t limit, uint8_t upperflag, uint8_t lowerflag, uint8_t type){
-    entry->lowerlimit = limit & 0xffff;
-    entry->upperlimit_upperflag = (limit >> 16)&0xff | upperflag;
-    entry->type_lowerflag = lowerflag | type;
-    entry->base_address1 = baseaddress & 0xffff;
-    entry->base_address2 = (baseaddress >> 16) & 0xff;
-    entry->base_address3 = (baseaddress >> 24) & 0xff;
-    entry->base_address4 = baseaddress >> 32;
-    entry->reserved = 0;
-}
-
 extern "C" void bp_handler(void){
     terminal_putchar('#');
 }
@@ -50,12 +28,11 @@ extern "C" void double_fault_handler(void){
 }
 
 extern "C" void irq0_handler(void) {
-    terminal_putchar('!');
     outb(0x20, 0x20); //EOI
 }
  
 extern "C" void irq1_handler(void) { //key board
-    uint8_t scancode, cv;
+    uint8_t scancode, cv, mode;
     __asm__ __volatile(
         "cli"::
     );
@@ -66,10 +43,26 @@ extern "C" void irq1_handler(void) { //key board
     outb(0x61, cv | 0x80);
     outb(0x61, cv);
 
-    terminal_putchar(asccode[scancode][0]);
-  
-	outb(0x20, 0x20); //EOI
+    switch(scancode){
+        case CAPSLOCK:
+            is_Caps = is_Caps^1;
+            goto end_handler;
+        case LSHIFT:
+        case RSHIFT:
+            on_Shift = 1;
+            goto end_handler;
+        case LSHIFT | 0x80:
+        case RSHIFT | 0x80:
+            on_Shift = 0;
+            goto end_handler;
+    }
+    if(scancode <= 0x7f){
+        mode = (on_Shift) ? 1 : (is_Caps ? (asccode[scancode][0]>='a' && asccode[scancode][0]>='z' ? 1 : 0): 0);
+        terminal_putchar(asccode[scancode][mode]);
+    }
 
+    end_handler:
+	outb(0x20, 0x20); //EOI
     __asm__ __volatile(
         "sti"::
     );

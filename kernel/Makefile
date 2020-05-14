@@ -15,7 +15,7 @@ all: kernel.o IRQ/idt.o IRQ/irq_asm.o
 
 ARCH_DIR = ../arch/${ARCH}
 kernel.o: 
-	${CXX} -c kernel.cpp -o $@ ${CXXFLAGS} -I ../include -I ${ARCH_DIR}/include
+	${CXX} -c kernel.cpp  -o $@ ${CXXFLAGS} -I ../arch/x86/include
 
 IRQ/idt.o:
 	${CXX} -c IRQ/idt.cpp  -o $@ ${CXXFLAGS} -I .
