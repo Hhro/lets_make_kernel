@@ -5,23 +5,23 @@ SECTIONS
   . = 4M;
   _kernel_physical_start = .;
 
-  .boottext :
+  .boottext : ALIGN(8)
     {
-      *boot.o (.multiboot)
-      *boot.o (.text)
+      *boot.S.o (.multiboot)
+      *boot.S.o (.text)
     }
   .bootrodata :
     {
-      *boot.o (.rodata)
+      *boot.S.o (.rodata)
     }
   .bootdata :
     {
-      *boot.o (.data)
+      *boot.S.o (.data)
     }
   .bootbss :
     {
-      *boot.o (.bss)
-      *boot.o (COMMON)
+      *boot.S.o (.bss)
+      *boot.S.o (COMMON)
     }
 
   . = ALIGN(0x1000);

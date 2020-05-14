@@ -1,4 +1,4 @@
-set(LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/boot/linker.ld)
+set(LINKER_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/boot/linker.cmake.ld)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffreestanding -fno-exceptions -fno-rtti -fPIC -fno-pie -no-pie -mcmodel=kernel")
 
