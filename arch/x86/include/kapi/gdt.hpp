@@ -32,22 +32,36 @@
 #define GDT_KERNEL_CODE PREPARE_GDT_ENTRY(0, 0xfffff,\
                     GDT_FLAG_LONG | \
                     GDT_FLAG_GRANUALRITY, \
-                    GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_EXECUTABLE|GDT_ACCESS_READABLE_WRITABLE )
+                    GDT_ACCESS_PRESENT| \
+                    GDT_ACCESS_PRIV_RING0| \
+                    GDT_ACCESS_TYPE| \
+                    GDT_ACCESS_EXECUTABLE| \
+                    GDT_ACCESS_READABLE_WRITABLE )
 
 #define GDT_KERNEL_DATA PREPARE_GDT_ENTRY(0, 0xfffff, \
                     GDT_FLAG_LONG | \
                     GDT_FLAG_GRANUALRITY, \
-                    GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_READABLE_WRITABLE )
+                    GDT_ACCESS_PRESENT| \
+                    GDT_ACCESS_PRIV_RING0| \
+                    GDT_ACCESS_TYPE| \
+                    GDT_ACCESS_READABLE_WRITABLE )
 
 #define GDT_KERNEL_CODE32 PREPARE_GDT_ENTRY(0, 0xfffff,\
                     GDT_FLAG_DB | \
                     GDT_FLAG_GRANUALRITY, \
-                    GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_EXECUTABLE|GDT_ACCESS_READABLE_WRITABLE )
+                    GDT_ACCESS_PRESENT| \
+                    GDT_ACCESS_PRIV_RING0| \
+                    GDT_ACCESS_TYPE| \
+                    GDT_ACCESS_EXECUTABLE| \
+                    GDT_ACCESS_READABLE_WRITABLE )
 
 #define GDT_KERNEL_DATA32 PREPARE_GDT_ENTRY(0, 0xfffff, \
                     GDT_FLAG_DB | \
                     GDT_FLAG_GRANUALRITY, \
-                    GDT_ACCESS_PRESENT|GDT_ACCESS_PRIV_RING0|GDT_ACCESS_TYPE|GDT_ACCESS_READABLE_WRITABLE )
+                    GDT_ACCESS_PRESENT| \
+                    GDT_ACCESS_PRIV_RING0| \
+                    GDT_ACCESS_TYPE| \
+                    GDT_ACCESS_READABLE_WRITABLE )
 
 
 #define GDT_TABLE_ALIGNMENT 0x1000
