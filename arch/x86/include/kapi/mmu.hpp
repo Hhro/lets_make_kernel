@@ -19,7 +19,8 @@
 #define PDPTE_WRITABLE (1 << 1)
 #define PDPTE_PRIV_LEVEL    (1 << 2)
 
-#define PD_SIZE 0x200000
+/* #define PD_SIZE 0x200000*/
+#define PD_SIZE 0x1000
 #define PD_ALIGN  0x1000
 #define PD_ENTRY_SIZE   8
 #define PD_ADDR_TO_ENTRY_IDX(addr)    (((addr)>>21)&0x1FF)
@@ -37,5 +38,8 @@
 #define PTE_PRESENT   (1 << 0)
 #define PTE_WRITABLE (1 << 1)
 #define PTE_PRIV_LEVEL    (1 << 2)
+
+#define TWO_MEGABYTES_SHIFT 21
+#define TWO_MEGABYTES (1 << TWO_MEGABYTES_SHIFT)
 
 #endif

@@ -24,7 +24,7 @@ set(CMAKE_ASM_COMPILER_TARGET ${TRIPLE})
 
 enable_language(ASM)
 
-include_directories(include)
+include_directories(kernel)
 include(arch/${ARCH}/defconfig.cmake)
 
 add_subdirectory("arch/${ARCH}")
