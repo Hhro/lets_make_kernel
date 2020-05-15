@@ -39,6 +39,26 @@ static inline uint8_t inb(uint16_t port)
 }
 
 void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type);
+void idt_init(void);
+
+extern "C" int break_point();
+extern "C" int double_fault();
+extern "C" int irq0();
+extern "C" int irq1();
+extern "C" int irq2();
+extern "C" int irq3();
+extern "C" int irq4();
+extern "C" int irq5();
+extern "C" int irq6();
+extern "C" int irq7();
+extern "C" int irq8();
+extern "C" int irq9();
+extern "C" int irq10();
+extern "C" int irq11();
+extern "C" int irq12();
+extern "C" int irq13();
+extern "C" int irq14();
+extern "C" int irq15();
 
 extern "C" void irq0_handler(void);
 extern "C" void irq1_handler(void);

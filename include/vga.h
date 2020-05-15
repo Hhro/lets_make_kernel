@@ -1,6 +1,8 @@
 #ifndef _VGA_H
 #define _VGA_H
 
+#include <stdint.h>
+
 /* Hardware text mode color constants. */
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
