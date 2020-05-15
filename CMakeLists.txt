@@ -6,7 +6,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project(lets_make_kernel
     DESCRIPTION "Lets make kernel!"
     LANGUAGES   CXX
-    VERSION     0.1.0
+    VERSION     0.1.1
 )
 
 if(NOT ARCH)
