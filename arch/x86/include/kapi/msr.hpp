@@ -8,6 +8,7 @@
 #define EAX_EDX_VAL(val, low, high) ((low) | (high) << 32)
 #define EAX_EDX_RET(val, low, high) "=a" (low), "=d" (high)
 
+#ifndef __ASSEMBLER__
 static inline unsigned long long rdmsr(unsigned int msr_id){
     DECLARE_ARGS(val, low, high);
 
@@ -27,5 +28,7 @@ static inline void wrmsr(unsigned int msr_id, u32 low, u32 high){
         : : "c" (msr_id), "a" (low), "d" (high) : "memory"
     );
 }
+
+#endif  // __ASSEMBLER__
 
 #endif  //_KAPI_X86_MSR_H

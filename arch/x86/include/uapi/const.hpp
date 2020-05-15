@@ -1,7 +1,8 @@
 #ifndef _UAPI_X86_CONST_H
 #define _UAPI_X86_CONST_H
 
-#define u32 unsigned long
+#define u8  unsigned char
+#define u32 unsigned int
 #define u64 unsigned long long
 
 #define _BIT(x)         (1<<(x))

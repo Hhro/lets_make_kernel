@@ -1,0 +1,9 @@
+toolchain/build
+*.o
+*.bin
+*.iso
+isodir/
+.vscode/
+build/
+.gdb*
+core
