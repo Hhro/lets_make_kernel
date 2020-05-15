@@ -82,7 +82,7 @@ class CpuInfo {
     inline void set_cpu_vendor_id(const char *cpu_vendor_id) {
         memcpy(cpu_vendor_id_, cpu_vendor_id, kCpuVendorIdLen);
     }
-    void set_features(const u32 feature_reg, const int feature_idx);
+    void set_features(const u32 feature_reg, const int feature_idx);       
 };
 
 #endif  // _KAPI_X86_CPUINFO_H
