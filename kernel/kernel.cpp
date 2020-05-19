@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <arch/common.hpp>
+#include <error.hpp>
 #include <vga.h>
  
 extern "C" void kernel_main(void);
@@ -13,10 +14,8 @@ void kernel_main(void)
 	
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello Kernel");
-	
-	__asm__ __volatile__(
-		"end_loop: hlt\t\n"
-		"jmp end_loop"
-		::
-	);
+	while(1) {}
+
+	// unreachable code
+	unreachable_error();
 }
