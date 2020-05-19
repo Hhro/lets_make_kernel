@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <arch.hpp>
+#include <arch/common.hpp>
 #include <vga.h>
  
 extern "C" void kernel_main(void);

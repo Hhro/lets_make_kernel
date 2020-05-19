@@ -1,4 +1,4 @@
-#include <arch.hpp>
+#include <arch/common.hpp>
 #include <kapi/gdt.hpp>
 #include <kapi/idt.hpp>
 
