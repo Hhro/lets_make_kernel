@@ -1,0 +1,21 @@
+name: Build check
+
+on:
+  [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependency
+      run: |
+        sudo apt-get update
+        sudo apt-get install binutils cmake
+    - name: build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
