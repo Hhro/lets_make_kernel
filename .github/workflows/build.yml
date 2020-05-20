@@ -12,7 +12,7 @@ jobs:
     - name: dependency
       run: |
         sudo apt-get update
-        sudo apt-get install binutils cmake
+        sudo apt-get install binutils cmake xorriso mtools
     - name: build
       run: |
         mkdir build
