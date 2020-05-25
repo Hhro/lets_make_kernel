@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <arch/common.hpp>
+#include <common.hpp>
 #include <error.hpp>
 #include <vga.h>
  
