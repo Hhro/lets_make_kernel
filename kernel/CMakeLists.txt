@@ -1,6 +1,5 @@
 set(KERNEL_FOLDERS
     ../lib
-    ../lib/keyboard
     # Add folder here
 )
 
