@@ -174,7 +174,7 @@ bool KeyboardDevice::IsUseCombinedCode(uint8_t ScanCode){
     uint8_t DownScanCode;
     bool UseCombined = false;
 
-    DownScanCode = ScanCode & 0x7f;
+    DownScanCode = (ScanCode & 0x7f);
     
     if(IsAlphaScanCode(DownScanCode)){
         if(bCapsLock || bShift) UseCombined = true;
@@ -232,8 +232,8 @@ bool KeyboardDevice::ConvertScanCodeToAscii(uint8_t ScanCode, uint8_t * pAscii, 
     }
 
     UseCombined = IsUseCombinedCode(ScanCode);
-    if(UseCombined) *pAscii = asccode[ScanCode & 0x7f][0];
-    else *pAscii = asccode[ScanCode & 0x7f][1];
+    if(UseCombined) *pAscii = asccode[ScanCode & 0x7f][1];
+    else *pAscii = asccode[ScanCode & 0x7f][0];
 
     if(bExtended == true)
     {
@@ -242,10 +242,11 @@ bool KeyboardDevice::ConvertScanCodeToAscii(uint8_t ScanCode, uint8_t * pAscii, 
     }
     else *pFlag = 0;
 
-    if(ScanCode & 0x80 == 0){
+    if((ScanCode & 0x80) == 0){
         *pFlag |= KEY_FLAGS_DOWN;
     }
-
+    
+    UpdateCombinationStatusAndLed(ScanCode);
     return true;
 }
 

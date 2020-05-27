@@ -2,6 +2,6 @@
 #define STDIO_HPP
 #include <stdint.h>
 
-uint8_t getChar();
+uint8_t terminal_getchar();
 
 #endif

@@ -20,7 +20,7 @@ void kernel_main(void)
 	/* Newline support is left as an exercise. */
 	while(1){
 		uint8_t ch;
-		ch = getChar();
+		ch = terminal_getchar();
 		terminal_putchar(ch);
 	}
 	
