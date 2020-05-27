@@ -69,6 +69,8 @@
 #define GDT_TABLE_SIZE  0x800
 
 #ifndef __ASSEMBLER__
+#include <stdint.h>
+
 #pragma pack( push, 1 )
 struct GDTDescr_8 {
    uint16_t lowerlimit;
@@ -92,7 +94,7 @@ struct GDTDescr_16{
 
 #pragma pack(pop)
 
-void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t limit, uint8_t flags, uint8_t access){
+inline void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t limit, uint8_t flags, uint8_t access){
     entry->lowerlimit = limit & 0xffff;
     entry->upperlimit_flags = (flags<<4) | (limit >> 16)&0x0f;
     entry->access = access;
@@ -103,7 +105,7 @@ void set_GDT_entry8(struct GDTDescr_8 * entry, uint32_t baseaddress, uint32_t li
     return;
 }
 
-void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t limit, uint8_t flags, uint8_t access){
+inline void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t limit, uint8_t flags, uint8_t access){
     entry->lowerlimit = limit & 0xffff;
     entry->upperlimit_flags = (flags<<4) | (limit >> 16)&0x0f ;
     entry->access = access;
@@ -113,6 +115,8 @@ void set_GDT_entry16(struct GDTDescr_16 * entry, uint64_t baseaddress, uint32_t 
     entry->base_address4 = baseaddress >> 32;
     entry->reserved = 0;
 }
+
+void gdt_init(void);
 
 #endif //end assembler
 

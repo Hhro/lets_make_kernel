@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include <stdint.h>
+
 #define RSHIFT 0x36
 #define LSHIFT 0x2a
 #define CAPSLOCK 0x3a
