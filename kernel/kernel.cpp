@@ -6,8 +6,10 @@
 #include <vga.h>
 #include <kapi/cpuinfo.hpp>
 #include <stdio.hpp>
+#include <keyboard.hpp>
  
 extern "C" void kernel_main(void);
+extern KeyboardDevice DKeyboard;
 
 void kernel_main(void) 
 {

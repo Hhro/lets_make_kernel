@@ -49,9 +49,10 @@ static inline void disableInterrupt(){
 }
 
 static inline uint64_t readRFLAGS(){
+    uint64_t ret;
     __asm__ __volatile__("pushfq \t\n"
-                        "pop rax"::);
-    return;
+                        "pop %0":"=a"(ret):);
+    return ret;
 }
 
 bool setInterruptFlag(bool isEnable);

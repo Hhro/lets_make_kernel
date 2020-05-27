@@ -1,115 +1,8 @@
-#ifndef KEYBOARD_HPP
-#define KEYBOARD_HPP
-#include <stdint.h>
-#include <queue.hpp>
+#include<kapi/idt.hpp>
+#include<keyboard.hpp>
+#include<queue.hpp>
 
-#define KEY_MAPPINGTABLEMAXCOUNT    89
-#define KEY_NONE        0x00
-#define KEY_ENTER       '\n'
-#define KEY_TAB         '\t'
-#define KEY_ESC         0x1B
-#define KEY_BACKSPACE   0x08
-
-#define KEY_CTRL        0x81
-#define KEY_LSHIFT      0x82
-#define KEY_RSHIFT      0x83
-#define KEY_PRINTSCREEN 0x84
-#define KEY_LALT        0x85
-#define KEY_CAPSLOCK    0x86
-#define KEY_F1          0x87
-#define KEY_F2          0x88
-#define KEY_F3          0x89
-#define KEY_F4          0x8A
-#define KEY_F5          0x8B
-#define KEY_F6          0x8C
-#define KEY_F7          0x8D
-#define KEY_F8          0x8E
-#define KEY_F9          0x8F
-#define KEY_F10         0x90
-#define KEY_NUMLOCK     0x91
-#define KEY_SCROLLLOCK  0x92
-#define KEY_HOME        0x93
-#define KEY_UP          0x94
-#define KEY_PAGEUP      0x95
-#define KEY_LEFT        0x96
-#define KEY_CENTER      0x97
-#define KEY_RIGHT       0x98
-#define KEY_END         0x99
-#define KEY_DOWN        0x9A
-#define KEY_PAGEDOWN    0x9B
-#define KEY_INS         0x9C
-#define KEY_DEL         0x9D
-#define KEY_F11         0x9E
-#define KEY_F12         0x9F
-#define KEY_PAUSE       0xA0
-
-
-#define KEY_FLAGS_UP 0x00
-#define KEY_FLAGS_DOWN 0x01
-#define KEY_FLAGS_EXTENDEDKEY 0x02
-
-#define SCANCODES_RSHIFT 0x36
-#define SCANCODES_LSHIFT 0x2a
-#define SCANCODES_CAPSLOCK 0x3a
-#define SCANCODES_NUMLOCK 0x45
-#define SCANCODES_SCROLLLOCK 0x46
-
-class KeyboardData {
-public:
-  uint8_t AsciiCode;
-  uint8_t ScanCode;
-  uint8_t Flag;
-};
-
-class KeyboardDevice {
-private:
-  bool bCapsLock;
-  bool bShift;
-  bool bExtended;
-  bool bNumLock;
-  bool bScrollLock;
-  Queue<KeyboardData> KeyQueue;
-
-  bool waitACK();
-  inline bool IsNumberPadScanCode(uint8_t ScanCode){
-    if( (71 <= ScanCode) && (ScanCode <= 83)) return true;
-    return false;
-  }
-
-  inline bool IsAlphaScanCode(uint8_t ScanCode){
-    if( ('a' <= asccode[ScanCode][0]) && (asccode[ScanCode][0] <= 'z')) return true;
-    return false;
-  }
-
-  inline bool IsNumberOrSymbolScanCode(uint8_t ScanCode){
-    if( (2<=ScanCode) && (ScanCode<=53) && (IsAlphaScanCode(ScanCode)==false) \
-     && (0x20 <=asccode[ScanCode][0]) && (asccode[ScanCode][0] <= 0x7f)) return true;
-    return false;
-  }
-
-public:
-  KeyboardDevice() {
-    bCapsLock = false;
-    bShift = false;
-    bExtended = false;
-    bNumLock = false;
-    bScrollLock = false;
-  }
-
-  bool isOutBufferFull();
-  bool isInBufferFull();
-  uint8_t GetScanCode();
-  bool Activate();
-  bool ChangeLED();
-  bool IsUseCombinedCode(uint8_t ScanCode);
-  void UpdateCombinationStatusAndLed(uint8_t ScanCode);
-  bool ConvertScanCodeToAscii(uint8_t ScanCode, uint8_t * pAscii, uint8_t *pFlag);
-  bool readFromKeyboard();
-  bool writeToQueue(uint8_t ScanCode);
-  bool readFromQueue(KeyboardData * target);
-};
-
-char asccode[ KEY_MAPPINGTABLEMAXCOUNT ][2] =
+uint8_t asccode[ KEY_MAPPINGTABLEMAXCOUNT ][2] =
 {
     /*  0   */  {   KEY_NONE        ,   KEY_NONE        },
     /*  1   */  {   KEY_ESC         ,   KEY_ESC         },
@@ -203,4 +96,193 @@ char asccode[ KEY_MAPPINGTABLEMAXCOUNT ][2] =
     /*  88  */  {   KEY_F12         ,   KEY_F12         }
 };
 
-#endif
+
+bool KeyboardDevice::isOutBufferFull() { 
+    if(inb(0x64) & 0x1) return true;
+    return false;
+}
+
+bool KeyboardDevice::isInBufferFull() {
+    if(inb(0x64) & 0x2) return true;
+    return false;
+}
+
+uint8_t KeyboardDevice::GetScanCode() {
+    while(isOutBufferFull() == false);
+
+    return inb(0x60);
+}
+
+bool KeyboardDevice::waitACK(){
+    bool res=false;
+    uint8_t Data;
+
+    for(int i=0; i<100; i++){
+        for(int j=0; j<0xffff; j++){
+            if(isOutBufferFull()) break;
+        }
+        Data = inb(0x60);
+        
+        if(Data == 0xFA){
+            res = true;
+            break;
+        }
+        else{
+            writeToQueue(Data);
+        }
+    }
+    return res;
+}
+
+bool KeyboardDevice::Activate() {
+    bool BeforeInterruptStatus, res;
+
+    BeforeInterruptStatus = setInterruptFlag(false);
+    outb(0x64, 0xAE); //keyboard controller activate command
+    for(int i=0; i<0xffff; i++) if(isInBufferFull()==false) break;
+
+    outb(0x60, 0xF4); //keyboard device activate command
+    res = waitACK();
+    setInterruptFlag(BeforeInterruptStatus);
+    return res;
+}
+
+bool KeyboardDevice::ChangeLED() {
+    bool BeforeInterruptStatus, res;
+
+    BeforeInterruptStatus = setInterruptFlag(false);
+
+    while(isInBufferFull());
+    outb(0x60, 0xED); // inform LED stuts data will send
+    while(isInBufferFull());
+
+    res = waitACK();
+    if( res == false){
+        setInterruptFlag(BeforeInterruptStatus);
+        return false;
+    }
+
+    outb(0x60, (bCapsLock<<2 | bNumLock<<1 | bScrollLock));
+    while(isInBufferFull());
+
+    res = waitACK();
+    setInterruptFlag(BeforeInterruptStatus);
+    return res;
+}
+
+bool KeyboardDevice::IsUseCombinedCode(uint8_t ScanCode){
+    uint8_t DownScanCode;
+    bool UseCombined = false;
+
+    DownScanCode = ScanCode & 0x7f;
+    
+    if(IsAlphaScanCode(DownScanCode)){
+        if(bCapsLock || bShift) UseCombined = true;
+        else UseCombined = false;
+    }
+    else if(IsNumberOrSymbolScanCode(DownScanCode)){
+        if(bShift) UseCombined = true;
+        else UseCombined = false;
+    }
+    else if(IsNumberPadScanCode(DownScanCode) && (bExtended == false)){
+        if(bNumLock) UseCombined = true;
+        else UseCombined = false;
+    }
+
+    return UseCombined;
+}
+
+void KeyboardDevice::UpdateCombinationStatusAndLed(uint8_t ScanCode){
+    bool IsDown, LedStatusChange=false;
+    uint8_t DownScanCode;
+
+    DownScanCode = ScanCode & 0x7f;
+    if(ScanCode & 0x80) IsDown = false;
+    else IsDown = true;
+
+    if( (DownScanCode == SCANCODES_LSHIFT || DownScanCode == SCANCODES_RSHIFT))
+    {
+        bShift = IsDown;
+    }
+    else if(DownScanCode == SCANCODES_NUMLOCK && IsDown){
+        bNumLock ^= true;
+        LedStatusChange = true;
+    }
+    else if(DownScanCode == SCANCODES_CAPSLOCK && IsDown){
+        bCapsLock ^= true;
+        LedStatusChange = true;
+    }
+    else if(DownScanCode == SCANCODES_SCROLLLOCK && IsDown){
+        bScrollLock ^= true;
+        LedStatusChange = true;
+    }
+
+    if(LedStatusChange){
+        ChangeLED();
+    }
+    
+}
+
+bool KeyboardDevice::ConvertScanCodeToAscii(uint8_t ScanCode, uint8_t * pAscii, uint8_t *pFlag){
+    bool UseCombined;
+    
+    if(ScanCode == 0xE0){
+        bExtended = true;
+        return false;
+    }
+
+    UseCombined = IsUseCombinedCode(ScanCode);
+    if(UseCombined) *pAscii = asccode[ScanCode & 0x7f][0];
+    else *pAscii = asccode[ScanCode & 0x7f][1];
+
+    if(bExtended == true)
+    {
+        *pFlag = KEY_FLAGS_EXTENDEDKEY;
+        bExtended = false;
+    }
+    else *pFlag = 0;
+
+    if(ScanCode & 0x80 == 0){
+        *pFlag |= KEY_FLAGS_DOWN;
+    }
+
+    return true;
+}
+
+bool KeyboardDevice::readFromKeyboard(){
+    uint8_t ScanCode;
+
+    ScanCode = GetScanCode();
+    return writeToQueue(ScanCode);
+}
+
+bool KeyboardDevice::writeToQueue(uint8_t ScanCode){
+    KeyboardData Data;
+    bool res, BeforeInterruptState;
+
+    res = false;
+
+    Data.ScanCode = ScanCode;
+    if(ConvertScanCodeToAscii(Data.ScanCode, &(Data.AsciiCode), &(Data.Flag)) == true){
+        BeforeInterruptState = setInterruptFlag(false);
+        res = KeyQueue.push(Data);
+        setInterruptFlag(BeforeInterruptState);
+    }
+
+    return res; 
+}
+
+bool KeyboardDevice::readFromQueue(KeyboardData * target){
+    bool res, BeforeInterruptState;
+
+    if(KeyQueue.isEmpty()){
+        return false;
+    }
+
+    BeforeInterruptState = setInterruptFlag(false);
+    res = KeyQueue.pop(target);
+    setInterruptFlag(BeforeInterruptState);
+    return res;
+}
+
+KeyboardDevice DKeyboard;

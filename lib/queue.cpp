@@ -12,8 +12,8 @@ bool Queue<T>::push(T value){
 
 template<class T>
 bool Queue<T>::pop(T* target){
-    if(!empty()){
-        *target = value[front];
+    if(!isEmpty()){
+        *target = values[front];
         front = (front + 1) % BUFFERSIZE;
         return true;
     }
@@ -30,7 +30,7 @@ bool Queue<T>::isEmpty(){
 
 template<class T>
 bool Queue<T>::isFull(){
-    if((rear + 1) % size == front) 
+    if((rear + 1) % BUFFERSIZE == front) 
 		return true;
 	else 
 		return false;

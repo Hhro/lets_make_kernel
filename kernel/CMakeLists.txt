@@ -1,5 +1,6 @@
 set(KERNEL_FOLDERS
-    IRQ
+    ../lib
+    ../lib/keyboard
     # Add folder here
 )
 
