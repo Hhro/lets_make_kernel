@@ -1,5 +1,5 @@
 set(KERNEL_FOLDERS
-    IRQ
+    ../lib
     # Add folder here
 )
 

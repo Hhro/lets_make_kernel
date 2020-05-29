@@ -26,8 +26,44 @@ struct TSSSEGMENT {
 };
 #pragma pack(pop)
 
+<<<<<<< HEAD
 void set_IDT_entry(struct IDTDescr* entry, uint64_t offset, uint16_t selector,
                    uint8_t ist, uint8_t type);
+=======
+static inline void outb(uint16_t port, uint8_t v){
+    __asm__ __volatile__("outb %0,%1" : : "a" (v), "dN" (port));
+}
+
+static inline uint8_t inb(uint16_t port)
+{
+    uint8_t ret;
+    __asm__ __volatile__ ( "inb %1, %0"
+                   : "=a"(ret)
+                   : "Nd"(port) );
+    return ret;
+}
+
+static inline void enableInterrupt(){
+    __asm__ __volatile__ ("sti"::);
+    return;
+}
+
+static inline void disableInterrupt(){
+    __asm__ __volatile__ ("cli"::);
+    return;
+}
+
+static inline uint64_t readRFLAGS(){
+    uint64_t ret;
+    __asm__ __volatile__("pushfq \t\n"
+                        "pop %0":"=a"(ret):);
+    return ret;
+}
+
+bool setInterruptFlag(bool isEnable);
+
+void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type);
+>>>>>>> dev
 void idt_init(void);
 
 extern "C" int break_point();
