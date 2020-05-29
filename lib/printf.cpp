@@ -134,7 +134,7 @@ int kPrintf(const char* format, ...) {
 		else if( *format == 'u' ) {
 			format++;
 			int i = va_arg(parameters, int);
-			int len = kPrinti(i, 16, 1, 'a');
+			int len = kPrinti(i, 10, 0, 'a'); 
 			if(len == -1)
 				return -1;
 			written += len;
