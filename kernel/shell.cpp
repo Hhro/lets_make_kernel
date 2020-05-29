@@ -74,7 +74,7 @@ void shell_main() {
             if (key == KEY_TAB) {
                 key = ' ';
             }
-            if (command_buf_idx < sizeof(command_buf)) {
+            if (command_buf_idx +1< sizeof(command_buf)) {
                 command_buf[command_buf_idx++] = key;
                 kPrintf("%c", key);
             }
