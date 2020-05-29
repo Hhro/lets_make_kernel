@@ -6,9 +6,8 @@
 #include <vga.h>
 
 static bool kPrint(const char* data, size_t length) {
-	const unsigned char* bytes = (const unsigned char*) data;
 	for (size_t i = 0; i < length; i++)
-		terminal_putchar(bytes[i]);
+		terminal_putchar(data[i]);
 	return true;
 }
 
