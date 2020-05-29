@@ -5,65 +5,51 @@
 #ifndef __ASEMBLER__
 #pragma pack(push, 1)
 struct IDTDescr {
-    uint16_t offset_1;  // offset bits 0..15
-    uint16_t selector;  // a code segment selector in GDT or LDT
-    uint8_t ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits
-                  // zero.
-    uint8_t type_attr;  // type and attributes
-    uint16_t offset_2;  // offset bits 16..31
-    uint32_t offset_3;  // offset bits 32..63
-    uint32_t zero;      // reserved
+  uint16_t offset_1;  // offset bits 0..15
+  uint16_t selector;  // a code segment selector in GDT or LDT
+  uint8_t ist;  // bits 0..2 holds Interrupt Stack Table offset, rest of bits
+                // zero.
+  uint8_t type_attr;  // type and attributes
+  uint16_t offset_2;  // offset bits 16..31
+  uint32_t offset_3;  // offset bits 32..63
+  uint32_t zero;      // reserved
 };
 
 struct TSSSEGMENT {
-    uint32_t reserved1;
-    uint64_t rsp[3];
-    uint64_t reserved2;
-    uint64_t ist[7];
-    uint64_t reserved3;
-    uint16_t reserved4;
-    uint16_t io_base;
+  uint32_t reserved1;
+  uint64_t rsp[3];
+  uint64_t reserved2;
+  uint64_t ist[7];
+  uint64_t reserved3;
+  uint16_t reserved4;
+  uint16_t io_base;
 };
 #pragma pack(pop)
 
-<<<<<<< HEAD
-void set_IDT_entry(struct IDTDescr* entry, uint64_t offset, uint16_t selector,
-                   uint8_t ist, uint8_t type);
-=======
-static inline void outb(uint16_t port, uint8_t v){
-    __asm__ __volatile__("outb %0,%1" : : "a" (v), "dN" (port));
+static inline void enableInterrupt() {
+  __asm__ __volatile__("sti" ::);
+  return;
 }
 
-static inline uint8_t inb(uint16_t port)
-{
-    uint8_t ret;
-    __asm__ __volatile__ ( "inb %1, %0"
-                   : "=a"(ret)
-                   : "Nd"(port) );
-    return ret;
+static inline void disableInterrupt() {
+  __asm__ __volatile__("cli" ::);
+  return;
 }
 
-static inline void enableInterrupt(){
-    __asm__ __volatile__ ("sti"::);
-    return;
-}
-
-static inline void disableInterrupt(){
-    __asm__ __volatile__ ("cli"::);
-    return;
-}
-
-static inline uint64_t readRFLAGS(){
-    uint64_t ret;
-    __asm__ __volatile__("pushfq \t\n"
-                        "pop %0":"=a"(ret):);
-    return ret;
+static inline uint64_t readRFLAGS() {
+  uint64_t ret;
+  __asm__ __volatile__(
+      "pushfq \t\n"
+      "pop %0"
+      : "=a"(ret)
+      :);
+  return ret;
 }
 
 bool setInterruptFlag(bool isEnable);
 
-void set_IDT_entry(struct IDTDescr * entry, uint64_t offset, uint16_t selector, uint8_t ist, uint8_t type);
->>>>>>> dev
+void set_IDT_entry(struct IDTDescr* entry, uint64_t offset, uint16_t selector,
+                   uint8_t ist, uint8_t type);
 void idt_init(void);
 
 extern "C" int break_point();
