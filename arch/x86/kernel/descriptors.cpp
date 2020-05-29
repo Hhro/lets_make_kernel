@@ -1,6 +1,6 @@
 #include <kapi/gdt.hpp>
 #include <kapi/idt.hpp>
-#include <keyboard.h>
+#include <keyboard.hpp>
 #include <stdint.h>
 
 
@@ -161,40 +161,13 @@ extern "C" void irq0_handler(void) {
 }
  
 extern "C" void irq1_handler(void) { //key board
-    uint8_t scancode, cv, mode;
-    __asm__ __volatile(
-        "cli"::
-    );
+    extern KeyboardDevice DKeyboard;
 
-    scancode = inb(0x60);
-    cv = inb(0x61);
-
-    outb(0x61, cv | 0x80);
-    outb(0x61, cv);
-
-    switch(scancode){
-        case CAPSLOCK:
-            is_Caps = is_Caps^1;
-            goto end_handler;
-        case LSHIFT:
-        case RSHIFT:
-            on_Shift = 1;
-            goto end_handler;
-        case LSHIFT | 0x80:
-        case RSHIFT | 0x80:
-            on_Shift = 0;
-            goto end_handler;
+    if(DKeyboard.isOutBufferFull()){
+        DKeyboard.readFromKeyboard();
     }
-    if(scancode <= 0x7f){
-        mode = (on_Shift) ? 1 : (is_Caps ? (asccode[scancode][0]>='a' && asccode[scancode][0]>='z' ? 1 : 0): 0);
-        terminal_putchar(asccode[scancode][mode]);
-    }
-
-    end_handler:
+    
 	outb(0x20, 0x20); //EOI
-    __asm__ __volatile(
-        "sti"::
-    );
 }
  
 extern "C" void irq2_handler(void) {
