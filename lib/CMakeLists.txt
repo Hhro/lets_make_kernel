@@ -21,9 +21,5 @@ foreach(FOLDER ${LIB_FOLDERS})
     endif()
 endforeach()
 
-list(REMOVE_ITEM LIB_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/memcmp.cpp")
-list(REMOVE_ITEM LIB_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/memcpy.cpp")
-list(REMOVE_ITEM LIB_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/memset.cpp")
-
 message("${LIB_SRCS}")
 add_library(lib OBJECT "${LIB_SRCS}")

@@ -1,6 +1,6 @@
 #include <fried/string.h>
 
-void * __attribute__((weak)) memcpy(void* restrict dstptr, const void* restrict srcptr, size_t size) {
+void * __attribute__((weak)) memcpy(void* dstptr, const void* srcptr, size_t size) {
 	unsigned char* dst = (unsigned char*) dstptr;
 	const unsigned char* src = (const unsigned char*) srcptr;
 	for (size_t i = 0; i < size; i++)
