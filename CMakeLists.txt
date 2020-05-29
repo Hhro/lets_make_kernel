@@ -29,10 +29,12 @@ include(arch/${ARCH}/defconfig.cmake)
 
 add_subdirectory("arch/${ARCH}")
 add_subdirectory(kernel)
+add_subdirectory(lib)
 
 add_dependencies(kernel arch)
+add_dependencies(lib kernel)
 
-add_executable(fried.bin $<TARGET_OBJECTS:arch> $<TARGET_OBJECTS:kernel>)
+add_executable(fried.bin $<TARGET_OBJECTS:arch> $<TARGET_OBJECTS:kernel> $<TARGET_OBJECTS:lib>)
 
 add_custom_command(OUTPUT fried.iso
     COMMAND mkdir -p ./isodir/boot/grub
