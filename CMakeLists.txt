@@ -43,12 +43,12 @@ add_custom_command(OUTPUT fried.iso
 )
 
 add_custom_target(run-iso
-    COMMAND qemu-system-x86_64 -cdrom ./fried.iso -curses
+    COMMAND qemu-system-x86_64 -cpu Broadwell -cdrom ./fried.iso -curses 
     DEPENDS fried.iso
 )
 
 add_custom_target(debug-iso
-    COMMAND qemu-system-x86_64 -cdrom ./fried.iso -curses -s -S
+    COMMAND qemu-system-x86_64 -cpu Broadwell -cdrom ./fried.iso -curses -s -S 
     DEPENDS fried.iso
 )
 

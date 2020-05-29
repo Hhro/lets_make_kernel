@@ -2,8 +2,8 @@
 #include <kapi/flag.hpp>
 
 // See if flag of EFLAGS is changable
-bool IsFlagChangable(const u64 flag) {
-    u64 f1, f2;
+bool IsFlagChangable(const uint64_t flag) {
+    uint64_t f1, f2;
 
     asm volatile(
         "pushf\n"
@@ -16,9 +16,8 @@ bool IsFlagChangable(const u64 flag) {
         "pushf\n"
         "pop %0\n"
         "popf\n"
-        : "=&r" (f1), "=&r" (f2)
-        : "ir" (flag)
-    );
+        : "=&r"(f1), "=&r"(f2)
+        : "ir"(flag));
 
-    return ((f1^f2) & flag) != 0;
+    return ((f1 ^ f2) & flag) != 0;
 }

@@ -3,6 +3,6 @@
 
 // Implement common feature per arch, like descript initialization, etc...
 
-bool arch_init();   // Returns false on error
+bool arch_init();  // Returns false on error
 
 #endif  // ARCH_HPP_
