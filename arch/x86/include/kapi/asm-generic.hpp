@@ -11,4 +11,18 @@
 #define EAX_EDX_VAL(low, high) ((low) | (high) << 32)
 #define EAX_EDX_RET(low, high) "=a"(low), "=d"(high)
 
+#ifndef __ASSEMBLY__
+
+// In early stage, there are no way to sleep precisely.
+static inline void wait_little() {
+    __asm__ __volatile__(
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        "nop\n"
+        "nop\n");
+}
+
+#endif  // __ASSEMBLY__
+
 #endif  // KAPI_X86_ASM_GENERIC_HPP
