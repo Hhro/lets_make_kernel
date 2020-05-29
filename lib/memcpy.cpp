@@ -1,4 +1,4 @@
-#include <string.h>
+#include <fried/string.h>
 
 void * __attribute__((weak)) memcpy(void* restrict dstptr, const void* restrict srcptr, size_t size) {
 	unsigned char* dst = (unsigned char*) dstptr;

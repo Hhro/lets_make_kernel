@@ -1,4 +1,4 @@
-#include <string.h>
+#include <fried/string.h>
 
 void* __attribute__((weak)) memset(void* bufptr, int value, size_t size) {
 	unsigned char* buf = (unsigned char*) bufptr;

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <fried/stdio.h>
 
 char kGetch() {
     char c;

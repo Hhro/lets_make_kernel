@@ -1,14 +1,14 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include <fried/stdio.h>
+#include <fried/string.h>
+#include <vga.h>
 
 static bool kPrint(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
 	for (size_t i = 0; i < length; i++)
-		if (terminal_putchar(bytes[i]) == EOF)
-			return false;
+		terminal_putchar(bytes[i]);
 	return true;
 }
 
@@ -44,7 +44,7 @@ static int kPrinti(int i, int b, int sg, int letbase)
 
 	return len;
 }
-int kPrintf(const char* restrict format, ...) {
+int kPrintf(const char* format, ...) {
 	va_list parameters;
 	va_start(parameters, format);
 

@@ -1,4 +1,4 @@
-#include <string.h>
+#include <fried/string.h>
 
 int __attribute__((weak)) memcmp(const void* aptr, const void* bptr, size_t size) {
 	const unsigned char* a = (const unsigned char*) aptr;
