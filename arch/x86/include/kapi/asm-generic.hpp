@@ -1,8 +1,7 @@
 #ifndef KAPI_X86_ASM_GENERIC_HPP
 #define KAPI_X86_ASM_GENERIC_HPP
 
-/* Inline assembly macros */
-
+// Inline assembly macros
 // Many traditional Intel instructions like rdmsr return value in form of
 // EDX:EAX where EDX stands for high value and EAX for low.
 // These macros can help you avoid some tedious inline assembly jobs required
@@ -11,7 +10,7 @@
 #define EAX_EDX_VAL(low, high) ((low) | (high) << 32)
 #define EAX_EDX_RET(low, high) "=a"(low), "=d"(high)
 
-#ifndef __ASSEMBLY__
+#ifndef __ASSEMBLER__
 
 // In early stage, there are no way to sleep precisely.
 static inline void wait_little() {
@@ -23,6 +22,6 @@ static inline void wait_little() {
         "nop\n");
 }
 
-#endif  // __ASSEMBLY__
+#endif  // __ASSEMBLER__
 
 #endif  // KAPI_X86_ASM_GENERIC_HPP
