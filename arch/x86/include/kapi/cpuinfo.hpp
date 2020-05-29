@@ -36,10 +36,7 @@ class CpuInfo {
     bool features_[kFeatureCnt];
 
    public:
-<<<<<<< HEAD
     // constructor
-=======
->>>>>>> [ADD] global cpu_info instance & rdtsc
     CpuInfo() {
         cpuid_avail_ = kNotInitialized;
         leaf_cnt_ = kNotInitialized;
@@ -60,16 +57,12 @@ class CpuInfo {
     }
     void DetectBasicInfo();
     void DetectCpuFeatures();
-<<<<<<< HEAD
-=======
     void CollectCpuInfo();
->>>>>>> [ADD] global cpu_info instance & rdtsc
     void SetupFeatures(const CpuidRegs* regs, const int feature_flag,
                        const int feature_idx);
     inline bool CpuHas(const uint32_t feature) const {
         return features()[feature];
     }
-    void CollectCpuInfo();
 
     // getters
     inline int cpuid_avail() const { return cpuid_avail_; }
