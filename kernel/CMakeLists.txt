@@ -1,5 +1,4 @@
 set(KERNEL_FOLDERS
-    ../lib
     # Add folder here
 )
 
