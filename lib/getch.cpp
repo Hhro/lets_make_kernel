@@ -1,4 +1,5 @@
 #include <fried/stdio.h>
+#include <keyboard.hpp>
 
 char kGetch() {
     char c;
