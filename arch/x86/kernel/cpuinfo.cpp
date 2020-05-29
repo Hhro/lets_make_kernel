@@ -4,6 +4,8 @@
 #include <kapi/flag.hpp>
 #include <kapi/string.hpp>
 
+CpuInfo cpu_info;
+
 bool CpuInfo::IsCpuidAvail() {
     bool avail;
 
@@ -23,16 +25,18 @@ void CpuInfo::DetectBasicInfo() {
         return;
     }
 
-    char cpu_vendor_id[kCpuVendorIdLen] = {0, };
+    char cpu_vendor_id[kCpuVendorIdLen] = {
+        0,
+    };
 
     // Get maximum input eax value for basic cpuid & CPU vendor name
     // cpuid(0) => (maxmium_leaf_cnt, vndr_id[8], vndr_id[4], vndr_id[0])
     CpuidRegs regs = CpuidRegs(0, 0, 0, 0);
     cpuid(&regs);
     set_leaf_cnt(regs.eax());
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[0]) = regs.ebx();
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[4]) = regs.edx();
-    *reinterpret_cast<unsigned int*>(&cpu_vendor_id[8]) = regs.ecx();
+    *reinterpret_cast<unsigned int *>(&cpu_vendor_id[0]) = regs.ebx();
+    *reinterpret_cast<unsigned int *>(&cpu_vendor_id[4]) = regs.edx();
+    *reinterpret_cast<unsigned int *>(&cpu_vendor_id[8]) = regs.ecx();
     set_cpu_vendor_id(cpu_vendor_id);
 
     // Get maximum input value for supported leaf 7 sub-leaves
@@ -55,9 +59,9 @@ void CpuInfo::DetectCpuFeatures() {
     // [TODO] make it concise!
     int feature_idx = 0;
     for (int leaf_idx = 0; leaf_idx < kFeatureLeafCnt; leaf_idx++) {
-        u32 leaf = kFeatureLeaves[leaf_idx][0];
-        u32 subleaf = kFeatureLeaves[leaf_idx][1];
-        u32 feature_flag = kFeatureLeaves[leaf_idx][2];
+        uint32_t leaf = kFeatureLeaves[leaf_idx][0];
+        uint32_t subleaf = kFeatureLeaves[leaf_idx][1];
+        uint32_t feature_flag = kFeatureLeaves[leaf_idx][2];
 
         CpuidRegs regs = CpuidRegs(leaf, 0, subleaf, 0);
         cpuid(&regs);
@@ -79,10 +83,10 @@ void CpuInfo::DetectCpuFeatures() {
     }
 }
 
-void CpuInfo::set_features(const u32 feature_reg, const int feature_idx) {
+void CpuInfo::set_features(const uint32_t feature_reg, const int feature_idx) {
     bool avail = false;
 
-    for (int bit_idx=0; bit_idx < 32; bit_idx++) {
+    for (int bit_idx = 0; bit_idx < 32; bit_idx++) {
         avail = (feature_reg & _BIT(bit_idx)) != 0;
         features_[feature_idx * 32 + bit_idx] = avail;
     }
@@ -91,4 +95,9 @@ void CpuInfo::set_features(const u32 feature_reg, const int feature_idx) {
 bool CpuInfo::IsIntel(void) {
     const char *cpu_vendor = cpu_vendor_id();
     return memcmp(cpu_vendor, "GenuineIntel", 12) == 0;
+}
+
+void CpuInfo::CollectCpuInfo(void) {
+    DetectBasicInfo();
+    DetectCpuFeatures();
 }

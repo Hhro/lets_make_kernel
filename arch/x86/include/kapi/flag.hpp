@@ -5,8 +5,8 @@
 
 #ifndef __ASSEMBLER__
 
-#include <kapi/const.hpp>
-bool IsFlagChangable(const u64 flag);
+#include <stdint.h>
+bool IsFlagChangable(const uint64_t flag);
 
 #endif  // __ASSEMBLER
 

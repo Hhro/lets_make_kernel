@@ -1,17 +1,18 @@
 #ifndef _KAPI_X86_CPUINFO_H
 #define _KAPI_X86_CPUINFO_H
 
+#include <stdint.h>
+
 #include <kapi/cpufeatures.hpp>
-#include <kapi/string.hpp>
-#include <kapi/flag.hpp>
-#include <kapi/const.hpp>
 #include <kapi/cpuid.hpp>
+#include <kapi/flag.hpp>
+#include <kapi/string.hpp>
 
 static const int kNotInitialized = -1;
 const int kCpuVendorIdLen = 16;
 
 class CpuInfo {
- private:
+   private:
     int cpuid_avail_;
 
     // Cpu information has vertical structure consisting of 'leaf',
@@ -23,9 +24,9 @@ class CpuInfo {
     // calling cpuid.
     // Variables below are number of leaves and subleaves.
     // Their initializations are required for detail detection.
-    u32 leaf_cnt_;
-    u32 extended_leaf_cnt_;
-    u32 leaf_7_subleaf_cnt_;
+    uint32_t leaf_cnt_;
+    uint32_t extended_leaf_cnt_;
+    uint32_t leaf_7_subleaf_cnt_;
 
     char cpu_vendor_id_[16];
 
@@ -34,7 +35,7 @@ class CpuInfo {
     // are available on current CPU to behave efficiently with no error.
     bool features_[kFeatureCnt];
 
- public:
+   public:
     // constructor
     CpuInfo() {
         cpuid_avail_ = kNotInitialized;
@@ -48,7 +49,7 @@ class CpuInfo {
     // methods
     bool IsCpuidAvail();
     bool IsIntel();
-    inline bool IsCpuidNRAvail(u32 eax) {
+    inline bool IsCpuidNRAvail(uint32_t eax) {
         if (eax < kExtendedCpuidNR)
             return eax <= leaf_cnt();
         else
@@ -56,15 +57,18 @@ class CpuInfo {
     }
     void DetectBasicInfo();
     void DetectCpuFeatures();
-    void SetupFeatures(const CpuidRegs *regs, const int feature_flag,
+    void SetupFeatures(const CpuidRegs* regs, const int feature_flag,
                        const int feature_idx);
-    inline bool CpuHas(const u32 feature) const { return features()[feature]; }
+    inline bool CpuHas(const uint32_t feature) const {
+        return features()[feature];
+    }
+    void CollectCpuInfo();
 
     // getters
     inline int cpuid_avail() const { return cpuid_avail_; }
-    inline u32 leaf_cnt() const { return leaf_cnt_; }
-    inline u32 extended_leaf_cnt() const { return extended_leaf_cnt_; }
-    inline u32 leaf_7_subleaf_cnt() const { return leaf_7_subleaf_cnt_; }
+    inline uint32_t leaf_cnt() const { return leaf_cnt_; }
+    inline uint32_t extended_leaf_cnt() const { return extended_leaf_cnt_; }
+    inline uint32_t leaf_7_subleaf_cnt() const { return leaf_7_subleaf_cnt_; }
     inline const char* cpu_vendor_id() const { return cpu_vendor_id_; }
     inline const bool* features() const { return features_; }
 
@@ -72,17 +76,19 @@ class CpuInfo {
     inline void set_cpuid_avail(const bool cpuid_avail) {
         cpuid_avail_ = cpuid_avail;
     }
-    inline void set_leaf_cnt(const u32 leaf_cnt) { leaf_cnt_ = leaf_cnt; }
-    inline void set_extended_leaf_cnt(const u32 extended_leaf_cnt) {
+    inline void set_leaf_cnt(const uint32_t leaf_cnt) { leaf_cnt_ = leaf_cnt; }
+    inline void set_extended_leaf_cnt(const uint32_t extended_leaf_cnt) {
         extended_leaf_cnt_ = extended_leaf_cnt;
     }
-    inline void set_leaf_7_subleaf_cnt(const u32 subleaf_cnt) {
+    inline void set_leaf_7_subleaf_cnt(const uint32_t subleaf_cnt) {
         leaf_7_subleaf_cnt_ = subleaf_cnt;
     }
-    inline void set_cpu_vendor_id(const char *cpu_vendor_id) {
+    inline void set_cpu_vendor_id(const char* cpu_vendor_id) {
         memcpy(cpu_vendor_id_, cpu_vendor_id, kCpuVendorIdLen);
     }
-    void set_features(const u32 feature_reg, const int feature_idx);       
+    void set_features(const uint32_t feature_reg, const int feature_idx);
 };
+
+extern CpuInfo cpu_info;
 
 #endif  // _KAPI_X86_CPUINFO_H

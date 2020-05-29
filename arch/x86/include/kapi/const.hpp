@@ -3,4 +3,4 @@
 
 #include <uapi/const.hpp>
 
-#endif // _KAPI_X86_CONST_H
+#endif  // _KAPI_X86_CONST_H
