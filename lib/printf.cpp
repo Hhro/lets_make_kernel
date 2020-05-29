@@ -12,6 +12,17 @@ static bool kPrint(const char* data, size_t length) {
 	return true;
 }
 
+
+/**
+ * Print integer in specified base format
+ * 
+ * @param i integer to print
+ * @param b base conversions
+ * @param sg 1 if signed value, 0 otherwise
+ * @param letbase character to use when digit is over 10
+ * 
+ * @returns printed length
+ **/
 static int kPrinti(int i, int b, int sg, int letbase)
 {
 	int t, len = 0;
