@@ -111,5 +111,7 @@ public:
   bool readFromQueue(KeyboardData * target);
 };
 
+uint8_t terminal_getchar();
+
 
 #endif
