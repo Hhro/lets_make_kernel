@@ -3,7 +3,7 @@
 
 void _putchar(char character) {
     char c = (char) character;
-	terminal_write(&c, sizeof(c));
+    terminal_write(&c, sizeof(c));
 
     return;
 }
