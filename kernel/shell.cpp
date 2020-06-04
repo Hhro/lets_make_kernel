@@ -20,14 +20,14 @@ BUILTIN_CMDS builtin_cmds[] = {
 };
 
 void help(char *args) {
-    kPrintf("List of cmds: \n");
+    printf("List of cmds: \n");
     for(int i = 0; i < BUILTIN_CMDS_COUNT; i++) {
-        kPrintf("%s: %s\n", builtin_cmds[i].name, builtin_cmds[i].desc);
+        printf("%s: %s\n", builtin_cmds[i].name, builtin_cmds[i].desc);
     }
 }
 
 void echo(char *args) {
-    kPrintf("%s\n", args);
+    printf("%s\n", args);
 }
 
 void execute_command(char *command_buf) {
@@ -49,7 +49,7 @@ void execute_command(char *command_buf) {
 }
 
 void shell_main() {
-    kPrintf("> ");
+    printf("> ");
 
     char command_buf[300];
     int command_buf_idx = 0;
@@ -61,12 +61,12 @@ void shell_main() {
             // TODO: backspace support
         }
         else if (key == KEY_ENTER) {
-            kPrintf("\n");
+            printf("\n");
             if (command_buf_idx > 0) {
                 command_buf[command_buf_idx] = '\x00';
                 execute_command(command_buf);
             }
-            kPrintf("> ");
+            printf("> ");
             memset(command_buf, 0, sizeof(command_buf));
             command_buf_idx = 0;
         }
@@ -76,7 +76,7 @@ void shell_main() {
             }
             if (command_buf_idx +1< sizeof(command_buf)) {
                 command_buf[command_buf_idx++] = key;
-                kPrintf("%c", key);
+                printf("%c", key);
             }
         }
     }

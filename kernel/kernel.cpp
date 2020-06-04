@@ -22,7 +22,7 @@ void kernel_main(void) {
   cpu_info.CollectCpuInfo();
 
   if (cpu_info.IsIntel()) {
-    kPrintf("Powered by %s\n", cpu_info.cpu_vendor_id());
+    printf("Powered by %s\n", cpu_info.cpu_vendor_id());
   }
 
   // Activate keyboard

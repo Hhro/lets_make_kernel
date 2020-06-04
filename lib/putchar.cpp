@@ -1,9 +1,9 @@
 #include <fried/stdio.h>
 #include <vga.h>
 
-int kPutchar(int ic) {
-    char c = (char) ic;
+void _putchar(char character) {
+    char c = (char) character;
 	terminal_write(&c, sizeof(c));
 
-    return ic;
+    return;
 }
