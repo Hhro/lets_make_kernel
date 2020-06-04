@@ -3,7 +3,11 @@
 #include <keyboard.hpp>
 #include <fried/string.h>
 
-#define BUILTIN_CMDS_COUNT  (sizeof(builtin_cmds) / sizeof(struct BUILTIN_CMDS))
+#define INCLUDE_HEADERS
+#define ADD_SHELL_BUILTIN(func, name, desc)
+#include <shell.inc>
+#undef ADD_SHELL_BUILTIN
+#undef INCLUDE_HEADERS
 
 struct BUILTIN_CMDS {
     void (*function)(char *);
@@ -11,12 +15,15 @@ struct BUILTIN_CMDS {
     const char *desc;
 };
 
+#define BUILTIN_CMDS_COUNT  (sizeof(builtin_cmds) / sizeof(struct BUILTIN_CMDS))
+
 void help(char *args);
 void echo(char *args);
 
-BUILTIN_CMDS builtin_cmds[] = {
-    {.function = help, .name = "help", .desc = "Print shell help document. "},
-    {.function = echo, .name = "echo", .desc = "Echo args to output. "},
+struct BUILTIN_CMDS builtin_cmds[] = {
+    #define ADD_SHELL_BUILTIN(_func, _name, _desc) {.function = _func, .name = _name, .desc = _desc},
+    #include <shell.inc>
+    #undef ADD_SHELL_BUILTIN
 };
 
 void help(char *args) {
