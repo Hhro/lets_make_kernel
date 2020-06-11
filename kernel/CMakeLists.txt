@@ -1,5 +1,6 @@
 set(KERNEL_FOLDERS
     # Add folder here
+    shell
 )
 
 set(KERNEL_SRCS)
