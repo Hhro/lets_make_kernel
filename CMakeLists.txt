@@ -9,6 +9,12 @@ project(lets_make_kernel
     VERSION     0.1.1
 )
 
+enable_testing()
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
 if(NOT ARCH)
     set(ARCH "x86")
 endif()
@@ -44,6 +50,10 @@ add_custom_command(OUTPUT fried.iso
     DEPENDS fried.bin grub.cfg
 )
 
+file(GLOB_RECURSE test_SRC
+    "test/*.test.cpp"
+)
+
 add_custom_target(run-iso
     COMMAND qemu-system-x86_64 -cpu Broadwell -cdrom ./fried.iso -curses 
     DEPENDS fried.iso
@@ -57,3 +67,37 @@ add_custom_target(debug-iso
 add_custom_target(iso ALL 
     DEPENDS fried.iso
 )
+
+set_target_properties(arch_test PROPERTIES COMPILE_DEFINITIONS "TEST")
+set_target_properties(kernel_test PROPERTIES COMPILE_DEFINITIONS "TEST")
+set_target_properties(lib_test PROPERTIES COMPILE_DEFINITIONS "TEST")
+
+foreach(test ${test_SRC})
+    get_filename_component(test_name ${test} NAME_WE)
+    message(${test}, ${test_name})
+    add_executable("${test_name}.test" EXCLUDE_FROM_ALL $<TARGET_OBJECTS:arch_test> $<TARGET_OBJECTS:kernel_test> $<TARGET_OBJECTS:lib_test> ${test})
+    set_target_properties("${test_name}.test" PROPERTIES COMPILE_DEFINITIONS "TEST")
+    add_custom_command(OUTPUT "${test_name}.test.iso"
+        COMMAND mkdir -p ./isodir/boot/grub
+        COMMAND cp "${test_name}.test" "./isodir/boot/fried.bin"
+        COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/test/grub.cfg" isodir/boot/grub/grub.cfg
+        COMMAND grub-mkrescue -o "${test_name}.test.iso" isodir
+        DEPENDS "${test_name}.test" grub.cfg 
+    )
+    list(APPEND test_iso_files "${test_name}.test.iso")
+    
+    add_test(NAME "${test_name}"
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/test/test.sh" "${test_name}.test.iso" )
+    set_tests_properties("${test_name}" PROPERTIES FIXTURES_REQUIRED test_fixture)
+    
+endforeach()
+
+add_custom_target(test_iso DEPENDS ${test_iso_files})
+add_test(NAME "build_test_iso"
+        COMMAND
+         "${CMAKE_COMMAND}"
+         --build "${CMAKE_BINARY_DIR}"
+         --config "$<CONFIG>"
+         --target test_iso
+       )
+set_tests_properties("build_test_iso" PROPERTIES FIXTURES_SETUP test_fixture)
