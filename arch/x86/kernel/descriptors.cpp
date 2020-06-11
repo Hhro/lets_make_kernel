@@ -4,6 +4,7 @@
 #include <kapi/idt.hpp>
 #include <kapi/io.hpp>
 #include <keyboard.hpp>
+#include <pit.hpp>
 
 struct IDTDescr IDT[256];
 uint64_t idt_ptr[2] = {
@@ -166,6 +167,9 @@ extern "C" void double_fault_handler(void) {
 }
 
 extern "C" void irq0_handler(void) {
+  extern PITDevice DPIT;
+
+  DPIT.add_tick();
   outb(0x20, 0x20);  // EOI
 }
 

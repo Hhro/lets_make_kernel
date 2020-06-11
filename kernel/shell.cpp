@@ -4,7 +4,7 @@
 #include <fried/string.h>
 
 #define INCLUDE_HEADERS
-#define ADD_SHELL_BUILTIN(func, name, desc)
+#define ADD_SHELL_BUILTIN(func, name, desc) extern void func(char *args);
 #include <shell.inc>
 #undef ADD_SHELL_BUILTIN
 #undef INCLUDE_HEADERS
