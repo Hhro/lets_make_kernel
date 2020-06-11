@@ -26,3 +26,4 @@ endforeach()
 
 message("${ARCH_SRCS}")
 add_library(arch OBJECT "${ARCH_SRCS}")
+add_library(arch_test OBJECT EXCLUDE_FROM_ALL "${ARCH_SRCS}")

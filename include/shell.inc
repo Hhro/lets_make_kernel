@@ -2,6 +2,8 @@
 // ADD needed headers here
 // Ex: #include <shell.hpp>
 
+#include <banner.hpp>
+
 #endif
 
 
@@ -12,3 +14,5 @@
 
 ADD_SHELL_BUILTIN(help, "help", "Print shell help document. ")
 ADD_SHELL_BUILTIN(echo, "echo", "Echo args to output. ")
+ADD_SHELL_BUILTIN(banner, "banner", "Prints front 10 chars from args bigger. ")
+ADD_SHELL_BUILTIN(dump_cpuinfo, "cpuinfo", "Dump cpuinfo to output. ")
