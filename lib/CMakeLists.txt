@@ -23,3 +23,4 @@ endforeach()
 
 message("${LIB_SRCS}")
 add_library(lib OBJECT "${LIB_SRCS}")
+add_library(lib_test OBJECT EXCLUDE_FROM_ALL "${LIB_SRCS}")

@@ -24,3 +24,4 @@ endforeach()
 message("${KERNEL_SRCS}")
 
 add_library(kernel OBJECT "${CMAKE_CURRENT_SOURCE_DIR}/kernel.cpp" ${KERNEL_SRCS})
+add_library(kernel_test OBJECT EXCLUDE_FROM_ALL "${CMAKE_CURRENT_SOURCE_DIR}/kernel.cpp" ${KERNEL_SRCS})

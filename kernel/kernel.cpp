@@ -10,6 +10,10 @@
 #include <fried/stdio.h>
 #include <shell.hpp>
 
+#ifdef TEST
+#include <test.hpp>
+#endif
+
 extern "C" void kernel_main(void);
 extern KeyboardDevice DKeyboard;
 
@@ -27,6 +31,15 @@ void kernel_main(void) {
 
   // Activate keyboard
   DKeyboard.Activate();
+
+
+  // Main
+
+  #ifdef TEST
+  test_main();
+  puts("TEST");
+  #endif
+
 	shell_main();
 	
 	unreachable_error();
