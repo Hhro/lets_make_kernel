@@ -19,6 +19,7 @@ struct BUILTIN_CMDS {
 
 void help(char *args);
 void echo(char *args);
+void banner(char *args);
 
 struct BUILTIN_CMDS builtin_cmds[] = {
     #define ADD_SHELL_BUILTIN(_func, _name, _desc) {.function = _func, .name = _name, .desc = _desc},
