@@ -87,12 +87,18 @@ foreach(test ${test_SRC})
     list(APPEND test_iso_files "${test_name}.test.iso")
     
     add_test(NAME "${test_name}"
-        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/test/test.sh" "${test_name}.test.iso" )
+        COMMAND "./test.sh" "${test_name}.test.iso" )
     set_tests_properties("${test_name}" PROPERTIES FIXTURES_REQUIRED test_fixture)
     
 endforeach()
 
-add_custom_target(test_iso DEPENDS ${test_iso_files})
+add_custom_command(OUTPUT "test.sh"
+    COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/test/test.sh" "${CMAKE_BINARY_DIR}"
+    COMMAND chmod +x "${CMAKE_BINARY_DIR}/test.sh"
+    DEPENDS "./test/test.sh"
+    )
+
+add_custom_target(test_iso DEPENDS ${test_iso_files} "test.sh")
 add_test(NAME "build_test_iso"
         COMMAND
          "${CMAKE_COMMAND}"
