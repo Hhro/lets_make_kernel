@@ -41,6 +41,7 @@ SECTIONS
   .rodata : AT ( (LOADADDR (.text) + SIZEOF (.text) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
   {
     *(.rodata)
+    *(.rodata.*)
   }
 
   . = ALIGN(0x1000);
@@ -48,6 +49,7 @@ SECTIONS
   .data : AT ( (LOADADDR (.rodata) + SIZEOF (.rodata) + 0xFFF) & 0xFFFFFFFFFFFFF000 )
   {
     *(.data)
+    *(.data.*)
   }
 
   . = ALIGN(0x1000);
@@ -56,6 +58,7 @@ SECTIONS
   {
     *(COMMON)
     *(.bss)
+    *(.bss.*)
   }
 
   _kernel_virtual_end = .;
