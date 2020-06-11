@@ -1,5 +1,4 @@
-#include<stdio.hpp>
-#include<keyboard.hpp>
+#include <keyboard.hpp>
 
 extern "C" KeyboardDevice DKeyboard;
 
