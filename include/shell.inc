@@ -12,3 +12,4 @@
 
 ADD_SHELL_BUILTIN(help, "help", "Print shell help document. ")
 ADD_SHELL_BUILTIN(echo, "echo", "Echo args to output. ")
+ADD_SHELL_BUILTIN(dump_cpuinfo, "cpuinfo", "Dump cpuinfo to output. ")
