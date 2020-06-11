@@ -92,7 +92,7 @@ void PITDevice::add_tick(){
 }
 
 void PITDevice::show_tick(){
-    printf_("ms : %lld, fraction : %d\n", system_timer_ms, system_timer_fraction);
+    printf("ms : %lld, fraction : %llu\n", system_timer_ms, system_timer_fraction);
     return;
 }
 
