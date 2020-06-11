@@ -4,6 +4,21 @@ on:
   [push, pull_request]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependency
+      run: |
+        sudo apt-get update
+        sudo apt-get install binutils cmake xorriso mtools qemu qemu-system
+    - name: test
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        CTEST_OUTPUT_ON_FAILURE=1 make test
   build:
     runs-on: ubuntu-latest
 
