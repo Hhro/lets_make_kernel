@@ -2,7 +2,7 @@
 #include <fried/string.h>
 #include <banner.hpp>
 
-char *glyphs[] =
+const char *glyphs[] =
 {
     "         ###  ### ###  # #   ##### ###   #  ##     ###  ",
     "         ###  ### ###  # #  #  #  ## #  #  #  #    ###  ",
