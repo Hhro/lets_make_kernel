@@ -33,7 +33,7 @@ public:
     PITDevice(int32_t fre_0, int32_t fre_1=-1, int32_t fre_2=-1) \
     :frequency_0(fre_0),frequency_1(fre_1),frequency_2(fre_2),\
     IRQ0_fraction(0), IRQ0_frequency(0), IRQ0_ms(0), IRQ0_reload(0) {
-        printf_("Abcd");
+        printf("Abcd");
     }
 
     bool set_PIT_counter(uint8_t channel, uint16_t count);
