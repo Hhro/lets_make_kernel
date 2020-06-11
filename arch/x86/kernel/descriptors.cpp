@@ -170,7 +170,6 @@ extern "C" void irq0_handler(void) {
   extern PITDevice DPIT;
 
   DPIT.add_tick();
-  DPIT.show_tick();
   outb(0x20, 0x20);  // EOI
 }
 
