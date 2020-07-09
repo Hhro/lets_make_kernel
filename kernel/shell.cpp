@@ -67,6 +67,10 @@ void shell_main() {
 
         if (key == KEY_BACKSPACE) {
             // TODO: backspace support
+            if (command_buf_idx > 0) {
+                command_buf_idx -= 1;
+                putchar(key);
+            }
         }
         else if (key == KEY_ENTER) {
             printf("\n");
@@ -84,7 +88,7 @@ void shell_main() {
             }
             if (command_buf_idx +1< sizeof(command_buf)) {
                 command_buf[command_buf_idx++] = key;
-                printf("%c", key);
+                putchar(key);
             }
         }
     }

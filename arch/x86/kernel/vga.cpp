@@ -53,6 +53,22 @@ extern "C" void terminal_putchar(char c)
 		}
 	}
 }
+
+void terminal_backspace(bool delete_char) {
+	if (terminal_column != 0)
+		--terminal_column;
+	else {
+		terminal_column = VGA_WIDTH - 1;
+		if (terminal_row != 0)
+			--terminal_row;
+		else
+			terminal_row = VGA_HEIGHT - 1;
+	}
+	if (delete_char) {
+		uint8_t terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+		terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+	}
+}
  
 void terminal_write(const char* data, size_t size) 
 {
