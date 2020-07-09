@@ -81,9 +81,9 @@ switch_context:
     pop %rax
     pop %rbp
 
-    add (19 * 8), %rdi
+    add $(19 * 8), %rdi
     movq %rdi, %rsp
-    sub (19 * 8), %rdi
+    sub $(19 * 8), %rdi
 
     macro_save_context
 
