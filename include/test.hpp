@@ -12,12 +12,13 @@ void report_error();
 void report_success();
 
 /**
- * Reports error and exits immediately when a is false on test.
+ * Reports error and exits immediately when cond is false on test.
  * 
  * @param cond Test condition. 
  **/
 static inline void assert_test(bool cond) {
-    report_error();
+    if (!cond)
+        report_error();
 }
 
 /**
