@@ -36,6 +36,7 @@ multiboot_header_end:
 .comm high_pdpt, PDPT_SIZE, PDPT_ALIGN
 .comm low_page_directory_table, PD_SIZE, PD_ALIGN
 .comm high_page_directory_table, PD_SIZE, PD_ALIGN
+.comm heap_page_directory_talbe, PD_SIZE, PD_ALIGN
 
 
 /*
@@ -177,7 +178,7 @@ setup_page_tables:
 
     movl $high_pdpt, %eax
     or $(PML4E_PRESENT | PML4E_WRITABLE), %eax
-    movl %eax, pml4 + (PML4_ADDR_TO_ENTRY_IDX(KERNEL_VIRTUAL_START) * PML4_ENTRY_SIZE)
+    movl %eax, pml4 + (PML4_ADDR_TO_ENTRY_IDX(KERNEL_VIRTUAL_START) * PML4_ENTRY_SIZE) /*same with KERNEL_HEAP_START*/
 
 	/* Initialize PDPT */
     movl $low_page_directory_table, %eax
@@ -187,6 +188,10 @@ setup_page_tables:
     movl $high_page_directory_table, %eax
     or $(PDPTE_PRESENT | PDPTE_WRITABLE), %eax
     movl %eax, high_pdpt + (PDPT_ADDR_TO_ENTRY_IDX(KERNEL_VIRTUAL_START) * PDPT_ENTRY_SIZE)
+
+	movl $heap_page_directory_talbe, %eax
+    or $(PDPTE_PRESENT | PDPTE_WRITABLE), %eax
+    movl %eax, high_pdpt + (PDPT_ADDR_TO_ENTRY_IDX(KERNEL_HEAP_START) * PDPT_ENTRY_SIZE)
 
     mov $0, %ecx
 
@@ -207,6 +212,22 @@ setup_page_tables:
     inc %ecx
     cmp %esi, %ecx
     jne .page_directory_table_loop  // if not equal redo loop
+
+	movl $(KERNEL_HEAP_END-KERNEL_HEAP_START), %edi
+	shrl $TWO_MEGABYTES_SHIFT, %edi
+	addl %edi, %esi
+	xor %edi, %edi
+
+.heap_page_directory_table_loop:
+	movl $TWO_MEGABYTES, %eax
+    mul %ecx
+    or $(PDE_PRESENT | PDE_WRITABLE | PDE_HUGE), %eax
+    movl %eax, heap_page_directory_talbe(, %edi, PD_ENTRY_SIZE)
+
+    inc %ecx
+	inc %edi
+    cmp %esi, %ecx
+    jne .heap_page_directory_table_loop
 
 	ret
 

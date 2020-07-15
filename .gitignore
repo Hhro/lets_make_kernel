@@ -1,3 +1,4 @@
+toolchain/src
 toolchain/build
 *.o
 *.bin

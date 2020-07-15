@@ -1,5 +1,5 @@
-#ifndef QUEUE_H
-#define QUEUE_H
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
 
 #define BUFFERSIZE 101
 template<class T> class Queue
