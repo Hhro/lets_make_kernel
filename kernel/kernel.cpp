@@ -9,6 +9,8 @@
 #include <keyboard.hpp>
 #include <fried/stdio.h>
 #include <shell.hpp>
+#include <uapi/string.hpp>
+#include <buddy_alloc.hpp>
 
 #ifdef TEST
 #include <test.hpp>
@@ -31,7 +33,7 @@ void kernel_main(void) {
 
   // Activate keyboard
   DKeyboard.Activate();
-
+  BAllocator.init();
 
   // Main
 
@@ -39,8 +41,8 @@ void kernel_main(void) {
   test_main();
   puts("TEST");
   #endif
+  
+  shell_main();
 
-	shell_main();
-	
 	unreachable_error();
 }
