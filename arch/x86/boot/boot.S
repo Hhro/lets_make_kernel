@@ -4,8 +4,7 @@
 #include <kapi/mmu.hpp>
 #include <kapi/flag.hpp>
 #include <kapi/kernel.hpp>
-
-#include "multiboot2.h"
+#include <kapi/multiboot2.h>
 
 #define X86_FEATURE_LM_AVAIL	(1 << 29)
 
@@ -37,6 +36,11 @@ multiboot_header_end:
 .comm low_page_directory_table, PD_SIZE, PD_ALIGN
 .comm high_page_directory_table, PD_SIZE, PD_ALIGN
 .comm heap_page_directory_talbe, PD_SIZE, PD_ALIGN
+
+magic_value:
+	.long 0
+multiboot2_info_struct:
+	.8byte 0
 
 
 /*
@@ -76,6 +80,8 @@ gdt_ptr:
 _start:
 	/* now we have a stack */
 	cli
+	mov %eax, magic_value
+	mov %ebx, multiboot2_info_struct
 	lgdt gdt_ptr
 	ljmp $0x18, $_main
 
@@ -273,6 +279,8 @@ _start64:
 	movw %ax, %gs
 	movw %ax, %ss
 
+	mov multiboot2_info_struct, %rsi
+	mov magic_value, %rdi
 	call kernel_main
 
 2:	hlt
