@@ -19,8 +19,8 @@
  *  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MULTIBOOT_HEADER
-#define MULTIBOOT_HEADER 1
+#ifndef KAPI_MULTIBOOT_HEADER
+#define KAPI_MULTIBOOT_HEADER 1
 
 /* How many bytes from the start of the file we search for the header.  */
 #define MULTIBOOT_SEARCH			32768
@@ -410,6 +410,7 @@ struct multiboot_tag_load_base_addr
   multiboot_uint32_t size;
   multiboot_uint32_t load_base_addr;
 };
+
 
 #endif /* ! ASM_FILE */
 
